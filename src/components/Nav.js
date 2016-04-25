@@ -16,7 +16,7 @@ const Nav = () =>
       activeClassName={css(styles.link, styles.activeLink)}>
       About
     </Link>
-    <a href="https://github.com/jaredpalmer/react-production-starter" className={css(styles.link)} target="_blank">GitHub</a>
+    <a href="https://github.com/Jacky-fe/react-isomorphic-skeleton" className={css(styles.link)} target="_blank">GitHub</a>
     <a href="https://www.facebook.com/kai.zhang.1840070" className={css(styles.link)} target="_blank">Facebook</a>
   </div>;
 

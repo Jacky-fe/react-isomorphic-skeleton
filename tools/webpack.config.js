@@ -22,29 +22,11 @@ var stats = {
     cachedAssets: VERBOSE,
  };
  
-const AUTOPREFIXER_BROWSERS = [
-  'Android 2.3',
-  'Android >= 4',
-  'Chrome >= 35',
-  'Firefox >= 31',
-  'Explorer >= 9',
-  'iOS >= 7',
-  'Opera >= 12',
-  'Safari >= 7.1',
-];
-const postcss = function (webpackBundler) {
-    return [
-      require('postcss-import')({ addDependencyTo: webpackBundler }),
-      require('precss')(),
-      require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
-    ];
-};
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   __DEV__: DEBUG,
 };
 var clientConfig = {
-	postcss,
 	stats : stats,
 	entry: {
 		app: getArray([isDevelopment && 'webpack-hot-middleware/client', './src/client.js']),
@@ -110,7 +92,6 @@ var clientConfig = {
 	}
 };
 var serverConfig = {
-	postcss,
 	entry: getArray(['./src/server.js']),
 	output: {
 		path: './dist',

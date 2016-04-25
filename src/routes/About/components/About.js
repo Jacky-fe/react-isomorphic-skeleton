@@ -14,10 +14,10 @@ const About = (props) => {
         />
       <h2 className={css(styles.header)}>About</h2>
       <p className={css(styles.lead)}>
-        This is an example react application (master-detail feed) with isomorphic rendering, async react-router routes, async redux reducers, async data fetching, and code-splitting.
+        This is an example react application skeleton with isomorphic rendering, async react-router routes, async redux reducers, async data fetching, and code-splitting. And you can debug it with browsersync.
       </p>
-      <h2 className={css(styles.header)}>Motivation</h2>
-      <p className={css(styles.lead)}>The file size of isomorphic React apps can quickly get out of hand. Many isomorphic starter kits look awesome to begin with but yield a several megabyte javascript file for the client to download. This project aims to demonstrate some possible solutions.</p>
+      <h2 className={css(styles.header)}>Base on</h2>
+      <p className={css(styles.lead)}>The code is base on <a className={css(styles.link)} href="https://github.com/jaredpalmer/react-production-starter" target="_blank">React Production Starter</a>The script is base on <a className={css(styles.link)} href="https://github.com/kriasoft/react-starter-kit" target="_blank">React Start Kit</a></p>
       <h2 className={css(styles.header)}>Under the Hood</h2>
       <ul className={css(styles.list)}>
         { data.map((item, i) => <li>
