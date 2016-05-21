@@ -21,6 +21,7 @@ import Helm from 'react-helmet'; // because we are already using helmet
 import reducer from './createReducer';
 import createRoutes from './routes/root';
 import helmet from 'helmet';
+import Wrapper from './components/Wrapper';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
@@ -58,6 +59,7 @@ app.use('/api/v0/posts', require('./api/posts'));
 app.use('/api/v0/post', require('./api/post'));
 // core render
 app.get('*', async (req, res, next) => {
+  const cssByLoader = [];
   const store = configureStore();
   const routes = createRoutes(store);
   const history = createMemoryHistory(req.path);
@@ -74,6 +76,8 @@ app.get('*', async (req, res, next) => {
       else if (renderProps) {
         
         const { components } = renderProps;
+        const insertCss = styles => cssByLoader.push(styles._getCss());
+        const context = {insertCss};
         // Define locals to be provided to all lifecycle hooks:
         const locals = {
           path: renderProps.location.pathname,
@@ -87,9 +91,11 @@ app.get('*', async (req, res, next) => {
             
             const initialState = store.getState();
             const InitialView = (
-              <Provider store={store}>
-                <RouterContext {...renderProps} />
-              </Provider>
+              <Wrapper context={context}>
+                <Provider store={store}>
+                  <RouterContext {...renderProps} />
+                </Provider>
+               </Wrapper> 
             );
             const data = StyleSheetServer.renderStatic(
               () => ReactDom.renderToString(InitialView)
@@ -102,6 +108,7 @@ app.get('*', async (req, res, next) => {
               initialState,
               head,
               data,
+              cssByLoader: cssByLoader.join('')
             });
           })
           .catch(e => console.log(e));

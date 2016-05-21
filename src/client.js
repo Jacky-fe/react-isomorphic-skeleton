@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux';
 import { configureStore } from './store';
 import { StyleSheet } from 'aphrodite';
+import Wrapper from './components/Wrapper'
 const initialState = window.INITIAL_STATE || {};
 
 // Set up Redux (note: this API requires redux@>=3.1.0):
@@ -15,7 +16,8 @@ const { dispatch } = store;
 const { pathname, search, hash } = window.location
 const location = `${pathname}${search}${hash}`
 StyleSheet.rehydrate(window.renderedClassNames);
-
+const insertCss = styles => styles._insertCss();
+const context = {insertCss};
 let render = () => {
   const createRoutes = require('./routes/root').default;
   const routes = createRoutes(store);
@@ -23,9 +25,11 @@ let render = () => {
   // loading route/component code for the initial location
   match({ routes, location }, () => {
     ReactDOM.render(
-      <Provider store={store}>
-          <Router routes={routes} history={browserHistory} key={Math.random()}/>
-      </Provider>,
+      <Wrapper context={context}>
+        <Provider store={store}>
+            <Router routes={routes} history={browserHistory} key={Math.random()}/>
+        </Provider>
+      </Wrapper>,
       document.getElementById('root')
     )
   });
