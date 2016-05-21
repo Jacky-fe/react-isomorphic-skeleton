@@ -9,6 +9,7 @@
     "test": "eslint src && jest"
   },
   "dependencies": {
+    "antd": "^1.1.0",
     "aphrodite": "^0.2.0",
     "babel-core": "^6.7.4",
     "babel-loader": "^6.2.4",
@@ -48,7 +49,7 @@
     ],
     "plugins": [
       "transform-runtime",
-      "transform-react-constant-elements", 
+      "transform-react-constant-elements",
       "transform-react-inline-elements"
     ]
   },
@@ -72,6 +73,7 @@
     "ncp": "^2.0.0",
     "node-sass": "^3.4.2",
     "npm": "^3.8.6",
+    "pleeease-filters": "^3.0.0",
     "postcss": "^5.0.19",
     "postcss-import": "^8.1.0",
     "postcss-loader": "^0.8.2",

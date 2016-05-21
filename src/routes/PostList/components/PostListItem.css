@@ -1,0 +1,13 @@
+.root {
+  margin: 0 auto 1.5rem;
+}
+.title {
+  font-size: 30px;
+  text-decoration: none;
+  line-height: 1;
+  margin: 0 0 1.5rem;
+  color: #000;
+  transition: .3s opacity ease;
+}
+.title:hover {opacity: .5}
+

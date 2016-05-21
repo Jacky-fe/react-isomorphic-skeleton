@@ -1,8 +1,15 @@
 import React, { PropTypes } from 'react';
 import Helmet from 'react-helmet';
 import Nav from './Nav';
-import s from './App.scss';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import s from './App.css';
+import messageStyle from 'antd/lib/message/style/index.css';
+import message from 'antd/lib/message';
+const info = () => {
+  message.info('yes, it\'s me!');
+  console.log(messageStyle);
+  console.log(s);
+};
 const App = ({ children }) => {
   return (
     <div className={s.root}>
@@ -10,9 +17,10 @@ const App = ({ children }) => {
           title="React Isomorphic Skeleton"
           titleTemplate="%s - React Isomorphic Skeleton"
         />
-        <h1 className={s.title}>
+        <h1 className={s.title} >
           React-Isomorphic-Skeleton
         </h1>
+        <a onClick={info}>click here will open a antd message control</a>  
         <Nav/>
         {children}
       <footer className={s.footer}>
@@ -28,4 +36,4 @@ const App = ({ children }) => {
 
 
 
-export default withStyles(s)(App);
+export default withStyles(s, messageStyle)(App);

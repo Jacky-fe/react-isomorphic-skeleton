@@ -16,7 +16,15 @@ const { dispatch } = store;
 const { pathname, search, hash } = window.location
 const location = `${pathname}${search}${hash}`
 StyleSheet.rehydrate(window.renderedClassNames);
-const insertCss = styles => styles._insertCss();
+const allStyles = [];
+const insertCss = (...styles) => {
+  styles.forEach(item => {
+    if (allStyles.indexOf(item) < 0) {
+      allStyles.push(item);
+      item._insertCss();
+    }
+  });
+};
 const context = {insertCss};
 let render = () => {
   const createRoutes = require('./routes/root').default;

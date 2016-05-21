@@ -76,7 +76,16 @@ app.get('*', async (req, res, next) => {
       else if (renderProps) {
         
         const { components } = renderProps;
-        const insertCss = styles => cssByLoader.push(styles._getCss());
+        const allStyles = [];
+        const insertCss = (...styles) => {
+          styles.forEach( (item, index, array) => {
+            // avoid repeat rendering
+            if (allStyles.indexOf(item) < 0) {
+              allStyles.push(item);
+              cssByLoader.push(item._getCss());
+            }
+          });
+        };
         const context = {insertCss};
         // Define locals to be provided to all lifecycle hooks:
         const locals = {
