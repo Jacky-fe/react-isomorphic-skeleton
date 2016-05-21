@@ -1,4 +1,12 @@
 #react-isomorphic-skeleton
+0.0.3 changelog
+1. support dynamc classname for css file
+2. enhance style compatibility of third part ui framework such as antd
+3. support css & sass and always support split them
+
+after this version i suggest you use css or sass instead of Aphrodite for CSS
+
+
 这是我认为目前最适合我现在负责项目的架构，它有我想要的一切。它有以下特点
 
 1. 每个路由的组件和逻辑都放在了单独的文件夹，便于以后单独提出；
@@ -11,6 +19,7 @@
 8. 数据获取服务端和客户端用法一致；
 9. 常见的优化，编译功能
 10. 代码写法与react-native相似
+
 
 ##注意
 node.js 版本 > 5.5
