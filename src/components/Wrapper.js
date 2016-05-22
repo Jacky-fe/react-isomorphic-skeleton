@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
-import s from './Wrapper.css';
 
 class Wrapper extends Component {
 
@@ -23,14 +22,7 @@ class Wrapper extends Component {
     };
   }
 
-  componentWillMount() {
-    const { insertCss } = this.props.context;
-    this.removeCss = insertCss(s);
-  }
 
-  componentWillUnmount() {
-    this.removeCss();
-  }
 
   render() {
     return this.props.children;

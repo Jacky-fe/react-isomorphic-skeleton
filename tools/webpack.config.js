@@ -38,21 +38,39 @@ const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   __DEV__: DEBUG,
 };
-const projectSrcPath = path.join(__dirname, '../src');
 const loaders = [
 	{
-		// publish lib has compiled, so dynamic className is not fit
+        test: /\.jsx?$/, 
+        loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
+        include: path.resolve(__dirname, '../src'),
+    },{
+        test: /\.json$/,
+        loader: 'json-loader',
+    }, {
+        test: /\.txt$/,
+        loader: 'raw-loader',
+    }, {
+        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+        loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
+    }, {
+        test: /\.(eot|ttf|wav|mp3)$/,
+        loader: 'file-loader',
+    },
+	{
+		// third pard ui componnet has compiled, so dynamic className is not fit
 		// eg: antd 
-		test(filePath) {
-	        return /\.css$/.test(filePath) && /\/node_modules\//.test(filePath);
-	    },
+		test: /\.css$/,
+		include: [
+	        path.join(__dirname, "../node_modules"),
+	    ],
 	    loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
 	},
     {
     	// add dynamic className for our project
-        test(filePath) {
-	        return /\.css$/.test(filePath) && filePath.startsWith(projectSrcPath);
-	    },
+        test: /\.css$/,
+		include: [
+	        path.join(__dirname, "../src"),
+	    ],
         loaders: [
             'isomorphic-style-loader',
             `css-loader?${JSON.stringify({
@@ -182,21 +200,7 @@ const clientConfig = {
     ]),
     devtool: isDevelopment ? 'cheap-module-eval-source-map' : false,
     module: {
-        loaders: [{
-            test: /\.jsx?$/, 
-            loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
-            include: path.resolve(__dirname, '../src'),
-        }, {
-            test: /\.json$/,
-            loader: 'json-loader',
-        }, {
-            test: /\.txt$/,
-            loader: 'raw-loader',
-        }, {
-            test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-            loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
-        },
-        ...loaders],
+        loaders
     }
 };
 const serverConfig = {
@@ -231,27 +235,7 @@ const serverConfig = {
     externals: [/^[a-z\-0-9]+$/,  /^\.\/assets$/],
     target: 'node',
     module: {
-        loaders: [{
-            test: /\.jsx?$/, 
-            loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
-            include: path.resolve(__dirname, '../src'),
-        }, {
-        test: /\.json$/,
-        loader: 'json-loader',
-        }, {
-            test: /\.json$/,
-            loader: 'json-loader',
-        }, {
-            test: /\.txt$/,
-            loader: 'raw-loader',
-        }, {
-            test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-            loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
-        }, {
-            test: /\.(eot|ttf|wav|mp3)$/,
-            loader: 'file-loader',
-        },
-        ...loaders]
+        loaders
     }
 };
 module.exports = [clientConfig, serverConfig];
