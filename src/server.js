@@ -59,7 +59,6 @@ app.use('/api/v0/posts', require('./api/posts'));
 app.use('/api/v0/post', require('./api/post'));
 // core render
 app.get('*', async (req, res, next) => {
-  const cssByLoader = [];
   const store = configureStore();
   const routes = createRoutes(store);
   const history = createMemoryHistory(req.path);
@@ -77,6 +76,7 @@ app.get('*', async (req, res, next) => {
         
         const { components } = renderProps;
         const allStyles = [];
+        const cssByLoader = [];
         const insertCss = (...styles) => {
           styles.forEach( (item, index, array) => {
             // avoid repeat rendering

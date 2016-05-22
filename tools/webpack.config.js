@@ -3,7 +3,6 @@ import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
 import autoprefixer from 'autoprefixer';
-
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
 const isProduction = !DEBUG;
@@ -39,38 +38,22 @@ const GLOBALS = {
   __DEV__: DEBUG,
 };
 const loaders = [
-	{
-        test: /\.jsx?$/, 
-        loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
-        include: path.resolve(__dirname, '../src'),
-    },{
-        test: /\.json$/,
-        loader: 'json-loader',
-    }, {
-        test: /\.txt$/,
-        loader: 'raw-loader',
-    }, {
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-        loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
-    }, {
-        test: /\.(eot|ttf|wav|mp3)$/,
-        loader: 'file-loader',
-    },
-	{
-		// third pard ui componnet has compiled, so dynamic className is not fit
-		// eg: antd 
-		test: /\.css$/,
-		include: [
-	        path.join(__dirname, "../node_modules"),
-	    ],
-	    loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
-	},
+   
     {
-    	// add dynamic className for our project
+        // third pard ui componnet has compiled, so dynamic className is not fit
+        // eg: antd 
         test: /\.css$/,
-		include: [
-	        path.join(__dirname, "../src"),
-	    ],
+        include: [
+            path.join(__dirname, "../node_modules"),
+        ],
+        loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
+    },
+    {
+        // add dynamic className for our project
+        test: /\.css$/,
+        include: [
+            path.join(__dirname, "../src"),
+        ],
         loaders: [
             'isomorphic-style-loader',
             `css-loader?${JSON.stringify({
@@ -92,6 +75,25 @@ const loaders = [
           'postcss-loader?pack=sass',
           'sass-loader',
         ],
+    }, {
+        test: /\.jsx?$/, 
+        loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
+        include: path.resolve(__dirname, '../src'),
+    }, {
+        test: /\.json$/,
+        loader: 'json-loader',
+    }, {
+        test: /\.txt$/,
+        loader: 'raw-loader',
+    }, {
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        loader: 'url-loader?limit=10000&name=[hash:6].[ext]!image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}',
+    }, {
+        test: /\.(woff|woff2)$/,
+        loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
+    },{
+        test: /\.(eot|ttf|wav|mp3)$/,
+        loader: 'file-loader',
     },
 ];
 /*
@@ -147,7 +149,7 @@ function postcss (bundler) {
       sass: [
         require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
       ],
-	}
+    }
 }
 const clientConfig = {
     stats,
@@ -164,9 +166,9 @@ const clientConfig = {
     },
     output: {
         path: path.resolve(__dirname,'../dist/static/assets/'),
-        filename: 'index.[hash:6].js',
         publicPath: '/assets/',
-        chunkFilename: '[id].[hash:6].js',
+        filename: DEBUG ? '[name].js?[chunkhash:6]' : '[name].[chunkhash:6].js',
+        chunkFilename: DEBUG ? '[id].js?[chunkhash:6]' : '[id].[chunkhash:6].js',
     },
     resolve: {
         extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
@@ -207,10 +209,10 @@ const serverConfig = {
     postcss,
     entry: getArray(['./src/server.js']),
     output: {
-        path: './dist',
-        filename: 'server.js',
+        path: './dist/static/assets',
+        filename: '../../server.js',
         libraryTarget: 'commonjs2',
-        publicPath: '/assets/'
+        publicPath: '/assets/',
     },
     resolve: {
         extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
@@ -231,6 +233,7 @@ const serverConfig = {
         new webpack.ProvidePlugin({
             "React": "react"
         }),
+        new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
     ]),
     externals: [/^[a-z\-0-9]+$/,  /^\.\/assets$/],
     target: 'node',
