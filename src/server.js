@@ -22,7 +22,7 @@ import reducer from './createReducer';
 import createRoutes from './routes/root';
 import helmet from 'helmet';
 import Wrapper from './components/Wrapper';
-
+import React from 'react';
 const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
 // view engine setu
@@ -112,8 +112,7 @@ app.get('*', async (req, res, next) => {
             const head = Helm.rewind();
             res.status(200).render('layout', {
               content: data.html,
-              app: assets.app.js,
-              vendors: assets.vendors.js,
+              app: assets.main.js,
               initialState,
               head,
               data,

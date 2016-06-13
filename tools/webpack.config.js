@@ -1,27 +1,12 @@
-'use strict';
 import path from 'path';
 import webpack from 'webpack';
+import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
 import autoprefixer from 'autoprefixer';
+import fs from 'fs';
+let mainConfig = { cdn: '' };
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
-const isProduction = !DEBUG;
-const isDevelopment = !isProduction;
-const getArray = function getArray() {
-    const _ref = [];
-    return _ref.concat.apply(_ref, arguments).filter(Boolean);
-};
-const stats = {
-    colors: true,
-    reasons: DEBUG,
-    hash: VERBOSE,
-    version: VERBOSE,
-    timings: true,
-    chunks: VERBOSE,
-    chunkModules: VERBOSE,
-    cached: VERBOSE,
-    cachedAssets: VERBOSE,
- };
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -32,78 +17,153 @@ const AUTOPREFIXER_BROWSERS = [
   'Opera >= 12',
   'Safari >= 7.1',
 ];
- 
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   __DEV__: DEBUG,
 };
-const loaders = [
-   
-    {
-        // third pard ui componnet has compiled, so dynamic className is not fit
-        // eg: antd 
-        test: /\.css$/,
+
+//
+// Common configuration chunk to be used for both
+// client-side (client.js) and server-side (server.js) bundles
+// -----------------------------------------------------------------------------
+
+const config = {
+  context: path.resolve(__dirname, '../src'),
+
+  output: {
+    path: path.resolve(__dirname, '../dist/static/assets'),
+    publicPath: mainConfig.cdn + '/assets/',
+    sourcePrefix: '  ',
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
         include: [
-            path.join(__dirname, "../node_modules"),
+          path.resolve(__dirname, '../src'),
         ],
-        loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
-    },
-    {
-        // add dynamic className for our project
-        test: /\.css$/,
-        include: [
-            path.join(__dirname, "../src"),
-        ],
-        loaders: [
-            'isomorphic-style-loader',
-            `css-loader?${JSON.stringify({
-                sourceMap: DEBUG,
-                // CSS Modules https://github.com/css-modules/css-modules
-                modules: true,
-                localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
-                // CSS Nano http://cssnano.co/options/
-                minimize: !DEBUG,
-            })}`,
-            'postcss-loader?pack=default',
-        ],
-    },
-    {
-        test: /\.scss$/,
-        loaders: [
-          'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
-          'postcss-loader?pack=sass',
-          'sass-loader',
-        ],
-    }, {
-        test: /\.jsx?$/, 
-        loaders: getArray(isDevelopment && 'react-hot', 'babel-loader'),
-        include: path.resolve(__dirname, '../src'),
-    }, {
+        query: {
+          // https://github.com/babel/babel-loader#options
+          cacheDirectory: DEBUG,
+
+          // https://babeljs.io/docs/usage/options/
+          babelrc: false,
+          presets: [
+            'react',
+            'es2015',
+            'stage-0',
+          ],
+          plugins: [
+            'transform-runtime',
+            [
+              "antd",
+              {
+              "style": "true"
+              }
+            ],
+            ...DEBUG ? [] : [
+              'transform-react-remove-prop-types',
+       
+            ],
+          ],
+        },
+      },
+      {
+          // third pard ui componnet has compiled, so dynamic className is not fit
+          // eg: antd 
+          test: /\.css$/,
+          include: [
+              path.join(__dirname, "../src/thirdpart"),
+              path.join(__dirname, "../node_modules"),
+          ],
+          loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
+      },
+      {
+          // add dynamic className for our project
+          test(filePath) {
+              return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, "../src"))
+                  && !filePath.startsWith(path.join(__dirname, "../src/thirdpart"));
+          },
+          loaders: [
+              'isomorphic-style-loader',
+              `css-loader?${JSON.stringify({
+                  sourceMap: DEBUG,
+                  // CSS Modules https://github.com/css-modules/css-modules
+                  modules: true,
+                  localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
+                  // CSS Nano http://cssnano.co/options/
+                  minimize: !DEBUG,
+              })}`,
+              'postcss-loader?pack=default',
+          ],
+      },
+      {
+          test: /\.scss$/,
+          loaders: [
+              'isomorphic-style-loader',
+              //`css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
+              `css-loader?${JSON.stringify({
+                  sourceMap: DEBUG,
+                  // CSS Modules https://github.com/css-modules/css-modules
+                  modules: true,
+                  localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
+                  // CSS Nano http://cssnano.co/options/
+                  minimize: !DEBUG,
+              })}`,
+              'postcss-loader?pack=sass',
+              'sass-loader',
+          ],
+      }, 
+      {
         test: /\.json$/,
         loader: 'json-loader',
-    }, {
+      },
+      {
         test: /\.txt$/,
         loader: 'raw-loader',
-    }, {
+      },
+      {
         test: /\.(png|jpg|jpeg|gif|svg)$/,
         loader: 'url-loader?limit=10000&name=[hash:6].[ext]!image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}',
-    }, {
-        test: /\.(woff|woff2)$/,
-        loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
-    },{
+      }, 
+      {
+          test: /\.(woff|woff2)$/,
+          loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
+      }, 
+      {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
-    },
-];
-/*
-const postcss = [
-    rucksack(),
-        autoprefixer({
-        browsers: ['last 2 versions', 'Firefox ESR', '> 1%', 'ie >= 8'],
-    }),
-];*/
-function postcss (bundler) {
+        query: {
+          name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+        },
+      },
+    ],
+  },
+
+  resolve: {
+    root: path.resolve(__dirname, '../src'),
+    modulesDirectories: ['node_modules'],
+    extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
+  },
+
+  cache: DEBUG,
+  debug: DEBUG,
+
+  stats: {
+    colors: true,
+    reasons: DEBUG,
+    hash: VERBOSE,
+    version: VERBOSE,
+    timings: true,
+    chunks: VERBOSE,
+    chunkModules: VERBOSE,
+    cached: VERBOSE,
+    cachedAssets: VERBOSE,
+  },
+
+  postcss(bundler) {
     return {
       default: [
         // Transfer @import rule by inlining content, e.g. @import 'normalize.css'
@@ -149,96 +209,107 @@ function postcss (bundler) {
       sass: [
         require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
       ],
-    }
-}
-const clientConfig = {
-    stats,
-    postcss,
-    entry: {
-        app: getArray([isDevelopment && 'webpack-hot-middleware/client', './src/client.js']),
-        vendors: [  
-            'react',
-            'react-dom',
-            'react-redux',
-            'react-router',
-            'redux',
-        ],
-    },
-    output: {
-        path: path.resolve(__dirname,'../dist/static/assets/'),
-        publicPath: '/assets/',
-        filename: DEBUG ? '[name].js?[chunkhash:6]' : '[name].[chunkhash:6].js',
-        chunkFilename: DEBUG ? '[id].js?[chunkhash:6]' : '[id].[chunkhash:6].js',
-    },
-    resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
-        modulesDirectories: ['node_modules', path.resolve(__dirname, '../node_modules')],
-    },
-    plugins: getArray([
-        new webpack.optimize.OccurenceOrderPlugin(), 
-        isProduction && new webpack.optimize.DedupePlugin(), 
-        isProduction && new webpack.optimize.UglifyJsPlugin({
-            minimize: true,
-            sourceMap: true,
-            compress: {
-                unused: true,
-                dead_code: true,
-                warnings: false,
-                screw_ie8: true,
-            }
-        }),
-        new webpack.ProvidePlugin({
-            "React": "react"
-        }), 
-        new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true }),
-        isDevelopment && new webpack.HotModuleReplacementPlugin(),
-        isDevelopment && new webpack.NoErrorsPlugin(),
-        new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.[hash:6].js'),
-        new AssetsPlugin({
-            path: path.join(__dirname, '../dist'),
-            filename: 'assets.js',
-            processOutput: x => `module.exports = ${JSON.stringify(x)};`,
-        }),
-    ]),
-    devtool: isDevelopment ? 'cheap-module-eval-source-map' : false,
-    module: {
-        loaders
-    }
+    };
+  },
 };
-const serverConfig = {
-    postcss,
-    entry: getArray(['./src/server.js']),
-    output: {
-        path: './dist/static/assets',
-        filename: '../../server.js',
-        libraryTarget: 'commonjs2',
-        publicPath: '/assets/',
-    },
-    resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
-        modulesDirectories: ['node_modules', path.resolve(__dirname, '../node_modules')],
-    },
-    node: {
-        console: false,
-        global: false,
-        process: false,
-        Buffer: false,
-        __filename: false,
-        __dirname: false
-    },
-    devtool: 'source-map',
-    plugins: getArray([
-        new webpack.optimize.OccurenceOrderPlugin(), 
-        new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
-        new webpack.ProvidePlugin({
-            "React": "react"
-        }),
-        new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
-    ]),
-    externals: [/^[a-z\-0-9]+$/,  /^\.\/assets$/],
-    target: 'node',
-    module: {
-        loaders
-    }
-};
-module.exports = [clientConfig, serverConfig];
+
+//
+// Configuration for the client-side bundle (client.js)
+// -----------------------------------------------------------------------------
+
+const clientConfig = extend(true, {}, config, {
+  entry: './client.js',
+
+  output: {
+    filename: DEBUG ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
+    chunkFilename: DEBUG ? '[name].[id].js?[chunkhash]' : '[name].[id].[chunkhash].js',
+  },
+
+  target: 'web',
+
+  plugins: [
+
+    // Define free variables
+    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true }),
+
+    // Emit a file with assets paths
+    // https://github.com/sporto/assets-webpack-plugin#options
+    new AssetsPlugin({
+      path: path.resolve(__dirname, '../dist'),
+      filename: 'assets.js',
+      processOutput: x => `module.exports = ${JSON.stringify(x)};`,
+    }),
+
+    // Assign the module and chunk ids by occurrence count
+    // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
+    // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
+    new webpack.optimize.OccurenceOrderPlugin(true),
+
+    ...DEBUG ? [] : [
+
+      // Search for equal or similar files and deduplicate them in the output
+      // https://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
+      new webpack.optimize.DedupePlugin(),
+
+      // Minimize all JavaScript output of chunks
+      // https://github.com/mishoo/UglifyJS2#compressor-options
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: VERBOSE,
+        },
+      }),
+
+      // A plugin for a more aggressive chunk merging strategy
+      // https://webpack.github.io/docs/list-of-plugins.html#aggressivemergingplugin
+      //new webpack.optimize.AggressiveMergingPlugin(),
+    ],
+  ],
+
+  // Choose a developer tool to enhance debugging
+  // http://webpack.github.io/docs/configuration.html#devtool
+  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+});
+
+//
+// Configuration for the server-side bundle (server.js)
+// -----------------------------------------------------------------------------
+
+const serverConfig = extend(true, {}, config, {
+  entry: './server.js',
+
+  output: {
+    filename: '../../server.js',
+    libraryTarget: 'commonjs2',
+  },
+
+  target: 'node',
+
+  externals: [/^[a-z\-0-9]+$/, /^\.\/assets$/],
+
+  plugins: [
+
+    // Define free variables
+    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
+
+    // Adds a banner to the top of each generated chunk
+    // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
+    new webpack.BannerPlugin('require("source-map-support").install();',
+      { raw: true, entryOnly: false }),
+    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+  ],
+
+  node: {
+    console: false,
+    global: false,
+    process: false,
+    Buffer: false,
+    __filename: false,
+    __dirname: false,
+  },
+
+  devtool: 'source-map',
+});
+
+export default [clientConfig, serverConfig];

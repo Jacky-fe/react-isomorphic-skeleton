@@ -16,40 +16,53 @@ import runServer from './runServer';
 import webpackConfig from './webpack.config';
 import clean from './clean';
 import copy from './copy';
+
 const DEBUG = !process.argv.includes('--release');
+
 /**
  * Launches a development web server with "live reload" functionality -
  * synchronizing URLs, interactions and code changes across multiple devices.
  */
 async function start() {
   await run(clean);
-  await run(copy.bind(undefined, {
-    watch: true
-  }));
+  await run(copy.bind(undefined, { watch: true }));
   await new Promise(resolve => {
     // Patch the client-side bundle configurations
     // to enable Hot Module Replacement (HMR) and React Transform
     webpackConfig.filter(x => x.target !== 'node').forEach(config => {
+      /* eslint-disable no-param-reassign */
+      config.entry = ['webpack-hot-middleware/client'].concat(config.entry);
+      config.output.filename = config.output.filename.replace('[chunkhash]', '[hash]');
+      config.output.chunkFilename = config.output.chunkFilename.replace('[chunkhash]', '[hash]');
+      config.plugins.push(new webpack.HotModuleReplacementPlugin());
+      config.plugins.push(new webpack.NoErrorsPlugin());
       config
         .module
         .loaders
         .filter(x => x.loader === 'babel-loader')
-        .forEach(x => (x.query = { // eslint-disable-line no-param-reassign
+        .forEach(x => (x.query = {
+          ...x.query,
+
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
           plugins: [
+            ...(x.query ? x.query.plugins : []),
             ['react-transform', {
-              transforms: [{
-                transform: 'react-transform-hmr',
-                imports: ['react'],
-                locals: ['module'],
-              }, {
-                transform: 'react-transform-catch-errors',
-                imports: ['react', 'redbox-react'],
-              }, ],
-            }, ],
+              transforms: [
+                {
+                  transform: 'react-transform-hmr',
+                  imports: ['react'],
+                  locals: ['module'],
+                }, {
+                  transform: 'react-transform-catch-errors',
+                  imports: ['react', 'redbox-react'],
+                },
+              ],
+            },
+            ],
           ],
         }));
+      /* eslint-enable no-param-reassign */
     });
 
     const bundler = webpack(webpackConfig);
@@ -61,6 +74,7 @@ async function start() {
 
       // Pretty colored output
       stats: webpackConfig[0].stats,
+
       // For other settings see
       // https://webpack.github.io/docs/webpack-dev-middleware
     });
@@ -70,32 +84,27 @@ async function start() {
       .map(compiler => webpackHotMiddleware(compiler));
 
     let handleServerBundleComplete = () => {
-      console.log('webpack compile done');
       runServer((err, host) => {
         if (!err) {
-
           const bs = Browsersync.create();
           bs.init({
-            ...(DEBUG ? {} : {
-              notify: false,
-              ui: false
-            }),
+            ...(DEBUG ? {} : { notify: false, ui: false }),
 
             proxy: {
-                target: host,
-                middleware: [wpMiddleware, ...hotMiddlewares],
-              },
+              target: host,
+              middleware: [wpMiddleware, ...hotMiddlewares],
+            },
 
-              // no need to watch '*.js' here, webpack will take care of it for us,
-              // including full page reloads if HMR won't work
-              files: ['dist/views/**/*.*'],
+            // no need to watch '*.js' here, webpack will take care of it for us,
+            // including full page reloads if HMR won't work
+            files: ['dist/content/**/*.*'],
           }, resolve);
           handleServerBundleComplete = runServer;
         }
       });
     };
 
-    bundler.plugin('done', (states) => { handleServerBundleComplete(); });
+    bundler.plugin('done', () => handleServerBundleComplete());
   });
 }
 
