@@ -2,27 +2,28 @@
 ##0.0.3 changelog
 
 
-1. support dynamc classname for css file
-2. enhance style compatibility of third part ui framework such as antd
-3. support css & sass and always support split them
+1. 支持css moduler；
+2. 支持className不可变的第三方ui框架如antd；
+3. 支持sass；
+4. 支持微信全版本（微信android版的坑已经帮你趟过了）。
 
 
 
-From this version i recommend use css or sass instead of "Aphrodite for CSS"
+建议使用sass取代"Aphrodite for CSS"
 
 ## Description
-这是我认为目前最适合我现在负责项目的架构，它有我想要的一切。它有以下特点
+这是一个全功能的react
 
 1. 每个路由的组件和逻辑都放在了单独的文件夹，便于以后单独提出；
 2. 做到了服务端同构渲染；
 3. 做到了html, css, js的根据路由按需加载；
 4. 比较纯净，没有太多的轮子；
 5. 集成了react-redux和react-router；
-6. 支持react-hot；
-7. 支持使用[Browsersync](https://browsersync.io)进行调试；
-8. 数据获取服务端和客户端用法一致；
-9. 常见的优化，编译功能
-10. 代码写法与react-native相似
+6. 支持hot-replace;
+7. 同时支持使用[Browsersync](https://browsersync.io)进行真机调试；
+8. 集成antd框架并支持最小化编译输出，参见src/components/app；
+9. 集成Helmet防范xss攻击。
+
 
 
 ##注意
