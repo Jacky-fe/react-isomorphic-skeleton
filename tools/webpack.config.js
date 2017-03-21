@@ -60,62 +60,62 @@ const config = {
             [
               "antd",
               {
-              "style": "true"
+                "style": "true"
               }
             ],
             ...DEBUG ? [] : [
               'transform-react-remove-prop-types',
-       
+
             ],
           ],
         },
       },
       {
-          // third pard ui componnet has compiled, so dynamic className is not fit
-          // eg: antd 
-          test: /\.css$/,
-          include: [
-              path.join(__dirname, "../src/thirdpart"),
-              path.join(__dirname, "../node_modules"),
-          ],
-          loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
+        // third pard ui componnet has compiled, so dynamic className is not fit
+        // eg: antd 
+        test: /\.css$/,
+        include: [
+          path.join(__dirname, "../src/thirdpart"),
+          path.join(__dirname, "../node_modules"),
+        ],
+        loader: 'isomorphic-style-loader!css?sourceMap&-restructuring!postcss?pack=default'
       },
       {
-          // add dynamic className for our project
-          test(filePath) {
-              return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, "../src"))
-                  && !filePath.startsWith(path.join(__dirname, "../src/thirdpart"));
-          },
-          loaders: [
-              'isomorphic-style-loader',
-              `css-loader?${JSON.stringify({
-                  sourceMap: DEBUG,
-                  // CSS Modules https://github.com/css-modules/css-modules
-                  modules: true,
-                  localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
-                  // CSS Nano http://cssnano.co/options/
-                  minimize: !DEBUG,
-              })}`,
-              'postcss-loader?pack=default',
-          ],
+        // add dynamic className for our project
+        test(filePath) {
+          return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, "../src"))
+            && !filePath.startsWith(path.join(__dirname, "../src/thirdpart"));
+        },
+        loaders: [
+          'isomorphic-style-loader',
+          `css-loader?${JSON.stringify({
+            sourceMap: DEBUG,
+            // CSS Modules https://github.com/css-modules/css-modules
+            modules: true,
+            localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
+            // CSS Nano http://cssnano.co/options/
+            minimize: !DEBUG,
+          })}`,
+          'postcss-loader?pack=default',
+        ],
       },
       {
-          test: /\.scss$/,
-          loaders: [
-              'isomorphic-style-loader',
-              //`css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
-              `css-loader?${JSON.stringify({
-                  sourceMap: DEBUG,
-                  // CSS Modules https://github.com/css-modules/css-modules
-                  modules: true,
-                  localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
-                  // CSS Nano http://cssnano.co/options/
-                  minimize: !DEBUG,
-              })}`,
-              'postcss-loader?pack=sass',
-              'sass-loader',
-          ],
-      }, 
+        test: /\.scss$/,
+        loaders: [
+          'isomorphic-style-loader',
+          //`css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
+          `css-loader?${JSON.stringify({
+            sourceMap: DEBUG,
+            // CSS Modules https://github.com/css-modules/css-modules
+            modules: true,
+            localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:6]',
+            // CSS Nano http://cssnano.co/options/
+            minimize: !DEBUG,
+          })}`,
+          'postcss-loader?pack=sass',
+          'sass-loader',
+        ],
+      },
       {
         test: /\.json$/,
         loader: 'json-loader',
@@ -127,11 +127,11 @@ const config = {
       {
         test: /\.(png|jpg|jpeg|gif|svg)$/,
         loader: 'url-loader?limit=10000&name=[hash:6].[ext]!image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}',
-      }, 
+      },
       {
-          test: /\.(woff|woff2)$/,
-          loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
-      }, 
+        test: /\.(woff|woff2)$/,
+        loader: 'url-loader?limit=10000&name=[hash:6].[ext]',
+      },
       {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
