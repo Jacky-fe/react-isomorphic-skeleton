@@ -1,6 +1,6 @@
 #react-isomorphic-skeleton
 ##0.0.3 changelog
-
+入门同学推荐使用[Next.js](https://github.com/zeit/next.js)这种上手容易，但灵活度有欠缺，它自己高度封装
 
 1. 支持css moduler；
 2. 支持className不可变的第三方ui框架如antd；
