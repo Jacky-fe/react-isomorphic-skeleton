@@ -28,8 +28,3 @@ export function configureStore(initialState = {}) {
 
   return store;
 }
-
-export function injectAsyncReducer(store, name, asyncReducer) {
-  store.asyncReducers[name] = asyncReducer;
-  store.replaceReducer(createReducer(store.asyncReducers));
-}

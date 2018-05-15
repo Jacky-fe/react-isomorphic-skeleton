@@ -2,10 +2,11 @@ import { provideHooks } from 'redial';
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { loadPost } from '../actions';
-import { StyleSheet, css } from 'aphrodite';
 import { Type } from '../../../style';
 import Helmet from 'react-helmet';
 import NotFound from '../../../components/NotFound';
+import styles from './style.css'
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 const redial = {
   fetch: ({ dispatch, params: { slug } }) => dispatch(loadPost(slug)),
@@ -27,14 +28,14 @@ const PostPage = ({ title, content, isLoading, error }) => {
         />
         {isLoading &&
           <div>
-            <h2 className={css(styles.title)}>Loading....</h2>
-            <p className={css(styles.primary)}></p>
+            <h2 className={styles.title}>Loading....</h2>
+            <p className={styles.primary}></p>
           </div>
         }
         {!isLoading &&
           <div>
-            <h2 className={css(styles.title)}>{ title }</h2>
-            <p className={css(styles.body)}>{ content }</p>
+            <h2 className={styles.title}>{ title }</h2>
+            <p className={styles.body}>{ content }</p>
           </div>
         }
       </div>
@@ -50,19 +51,6 @@ PostPage.propTypes = {
   content: PropTypes.string,
   isLoading: PropTypes.bool,
   error: PropTypes.object
-};
+}
 
-const styles = StyleSheet.create({
-  body: {
-    fontSize: '1.25rem',
-    lineHeight: '1.5',
-    margin: '1rem 0',
-  },
-  title: {
-    fontSize: '36px',
-    margin: '1rem 0',
-    color: '#000',
-  },
-});
-
-export default provideHooks(redial)(connect(mapStateToProps)(PostPage));
+export default withStyles(styles)(provideHooks(redial)(connect(mapStateToProps)(PostPage)));

@@ -15,7 +15,6 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { trigger } from 'redial';
 import { callAPIMiddleware } from './middleware/callAPIMiddleware';
-import { StyleSheetServer } from 'aphrodite';
 import { configureStore } from './store';
 import Helm from 'react-helmet'; // because we are already using helmet
 import reducer from './createReducer';
@@ -106,12 +105,11 @@ app.get('*', async (req, res, next) => {
                 </Provider>
                </Wrapper> 
             );
-            const data = StyleSheetServer.renderStatic(
-              () => ReactDom.renderToString(InitialView)
-            );
+            const data = ReactDom.renderToString(InitialView);
+        
             const head = Helm.rewind();
             res.status(200).render('layout', {
-              content: data.html,
+              content: data,
               app: assets.main.js,
               initialState,
               head,

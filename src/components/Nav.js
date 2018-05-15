@@ -1,41 +1,22 @@
 import React, { PropTypes } from 'react';
 import IndexLink from 'react-router/lib/IndexLink';
 import Link from 'react-router/lib/Link';
-import { StyleSheet, css } from 'aphrodite';
-import { Type } from '../style';
-
+import style from './Nav.css';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 const Nav = () =>
   <div>
     <IndexLink to="/"
-      className={css(styles.link)}
-      activeClassName={css(styles.link, styles.activeLink)}>
+      className={style.link}
+      activeClassName={`${style.link} ${style.activeLink}`}>
       Home
     </IndexLink>
     <Link to="/about"
-      className={css(styles.link)}
-      activeClassName={css(styles.link, styles.activeLink)}>
+      className={style.link}
+      activeClassName={`${style.link} ${style.activeLink}`}>
       About
     </Link>
-    <a href="https://github.com/Jacky-fe/react-isomorphic-skeleton" className={css(styles.link)} target="_blank">GitHub</a>
-    <a href="https://www.facebook.com/kai.zhang.1840070" className={css(styles.link)} target="_blank">Facebook</a>
+    <a href="https://github.com/Jacky-fe/react-isomorphic-skeleton" className={style.link} target="_blank">GitHub</a>
+    <a href="https://www.facebook.com/kai.zhang.1840070" className={style.link} target="_blank">Facebook</a>
   </div>;
 
-const styles = StyleSheet.create({
-  link: {
-    maxWidth: 700,
-    color: '#999',
-    margin: '1.5rem 1rem 1.5rem 0',
-    display: 'inline-block',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    transition: '.2s opacity ease',
-    ':hover': {
-      opacity: .6,
-    },
-  },
-  activeLink: {
-    color: '#000',
-  },
-});
-
-export default Nav;
+export default withStyles(style)(Nav);

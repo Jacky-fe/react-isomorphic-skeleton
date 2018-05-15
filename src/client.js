@@ -5,7 +5,6 @@ import { match, Router, browserHistory } from 'react-router'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux';
 import { configureStore } from './store';
-import { StyleSheet } from 'aphrodite';
 import Wrapper from './components/Wrapper'
 const initialState = window.INITIAL_STATE || {};
 
@@ -15,7 +14,6 @@ const { dispatch } = store;
 
 const { pathname, search, hash } = window.location
 const location = `${pathname}${search}${hash}`
-StyleSheet.rehydrate(window.renderedClassNames);
 const allStyles = [];
 const insertCss = (...styles) => {
   styles.forEach(item => {

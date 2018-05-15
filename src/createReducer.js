@@ -1,4 +1,5 @@
 import posts from './routes/PostList/reducer';
+import currentPost from './routes/Post/reducer';
 import { combineReducers } from 'redux';
 
 // Only combine reducers needed for initial render, others will be
@@ -6,6 +7,7 @@ import { combineReducers } from 'redux';
 export default function createReducer(asyncReducers) {
   return combineReducers({
     posts,
+    currentPost,
     ...asyncReducers,
   });
 }

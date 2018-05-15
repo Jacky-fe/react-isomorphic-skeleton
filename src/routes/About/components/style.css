@@ -1,0 +1,35 @@
+.header {
+  font-size: 36px;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+}
+.lead {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  color: #555;
+}
+.body {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  color: #555;
+}
+.list {
+  font-size: 1rem;
+  list-style: none;
+  padding: 0;
+}
+.link {
+  display: block;
+  font-size: 1.25rem;
+  margin: 0 0 .5rem;
+  line-height: 1.5;
+  font-weight: bold;
+  color: #08c;
+  opacity: 1;
+  transition: .2s opacity ease;
+}
+.link:hover {
+  opacity: .6;
+}

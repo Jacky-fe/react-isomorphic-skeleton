@@ -7,8 +7,6 @@ import messageStyle from 'antd/lib/message/style/index.css';
 import message from 'antd/lib/message';
 const info = () => {
   message.info('yes, it\'s me!');
-  console.log(messageStyle);
-  console.log(s);
 };
 const App = ({ children }) => {
   return (
