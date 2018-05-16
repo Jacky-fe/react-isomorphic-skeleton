@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
+import PropTypes from 'prop-types';
 
-class Wrapper extends Component {
+class Wrapper extends React.Component {
 
   static propTypes = {
     context: PropTypes.shape({

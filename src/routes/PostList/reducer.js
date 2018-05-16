@@ -1,5 +1,5 @@
 import * as types from '../../constants';
-import update from 'react/lib/update';
+import update from 'immutability-helper';
 
 export default function posts(state = {
   data: [],

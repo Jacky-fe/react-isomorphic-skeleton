@@ -30,7 +30,7 @@ let render = () => {
   // calling `match` is simply for side effects of
   // loading route/component code for the initial location
   match({ routes, location }, () => {
-    ReactDOM.render(
+    ReactDOM.hydrate(
       <Wrapper context={context}>
         <Provider store={store}>
             <Router routes={routes} history={browserHistory} key={Math.random()}/>
@@ -78,7 +78,3 @@ if (module.hot) {
 }
 
 render();
-var serverSideStyle = document.getElementById("server-side-style");
-if(serverSideStyle) {
-	document.getElementsByTagName("head")[0].removeChild(serverSideStyle);
-}

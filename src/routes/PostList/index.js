@@ -1,5 +1,6 @@
 import { provideHooks } from 'redial';
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { loadPosts } from './actions';
 import { connect } from 'react-redux';
 import PostListItem from './components/PostListItem';
@@ -19,7 +20,7 @@ const PostListPage = ({ posts }) =>
     {posts.map((post, i) => <PostListItem key={post.id} post={post} />)}
   </div>;
 
-PostListPage.PropTypes = {
+PostListPage.propTypes = {
   posts: PropTypes.array.isRequired,
 };
 

@@ -1,5 +1,7 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import IndexLink from 'react-router/lib/IndexLink';
+import PropTypes from 'prop-types';
+
 import Link from 'react-router/lib/Link';
 import style from './Nav.css';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import Nav from './Nav';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
