@@ -56,15 +56,11 @@ let render = () => {
             dispatch,
           };
 
-        // Don't fetch data for initial route, server has already done the work:
         if (window.INITIAL_STATE) {
-          // Delete initial data so that subsequent data fetches can occur:
           delete window.INITIAL_STATE;
-        } else {
-          // Fetch mandatory data dependencies for 2nd route change onwards:
-          trigger('fetch', components, locals);
-        }
-
+        } 
+        trigger('fetch', components, locals);
+        
         // Fetch deferred, client-only data dependencies:
         trigger('defer', components, locals);
       });
