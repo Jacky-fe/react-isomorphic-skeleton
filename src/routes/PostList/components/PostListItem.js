@@ -10,6 +10,4 @@ const PostListItem = ({ post }) =>
     <h3><Link to={`/post/${post.slug}`} className={s.title}>{post.title}</Link></h3>
   </div>;
 
-
-
 export default withStyles(s)(PostListItem);

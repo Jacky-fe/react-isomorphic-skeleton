@@ -18,10 +18,10 @@ import { callAPIMiddleware } from './middleware/callAPIMiddleware';
 import { configureStore } from './store';
 import Helm from 'react-helmet'; // because we are already using helmet
 import reducer from './createReducer';
-import createRoutes from './routes/root';
 import helmet from 'helmet';
 import Wrapper from './components/Wrapper';
 import React from 'react';
+import routes from './routes/root';
 const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
 // view engine setu
@@ -57,9 +57,9 @@ app.use(express.static(path.join(__dirname, './static')));
 app.use('/api/v0/posts', require('./api/posts'));
 app.use('/api/v0/post', require('./api/post'));
 // core render
+
 app.get('*', async (req, res, next) => {
   const store = configureStore();
-  const routes = createRoutes(store);
   const history = createMemoryHistory(req.path);
   const { dispatch } = store;
   try{
@@ -108,14 +108,30 @@ app.get('*', async (req, res, next) => {
             const data = ReactDom.renderToString(InitialView);
         
             const head = Helm.rewind();
-            res.status(200).render('layout', {
-              content: data,
-              app: assets.main.js,
-              initialState,
-              head,
-              data,
-              cssByLoader: cssByLoader.join('')
-            });
+            const outputhtml = `<!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="UTF-8"/>
+                ${head.title.toString()}
+                ${head.meta.toString()}
+                ${head.link.toString()}
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <style rel="stylesheet" type="text/css">
+                  body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{margin:0;padding:0;font-family:'微软雅黑'}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul,li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0}a{color:#000;text-decoration:none}a:active{color:#000}.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}.clear{clear:both}html{-webkit-text-size-adjust:none}
+                </style>
+                <style id="css">${cssByLoader.join('')}</style>
+              </head>
+              <body>
+                <div id="root" className="container-fluid" >${data}</div>
+                <script>
+                window.INITIAL_STATE = ${JSON.stringify(initialState)};
+                </script>
+                <script type="text/javascript" src='${assets.vendors.js}'></script>
+                <script type="text/javascript" src='${assets.client.js}'></script>
+              </body>
+            </html>
+            `
+            res.status(200).send(outputhtml);
           })
           .catch(e => console.log(e));
       }
@@ -161,12 +177,14 @@ app.use(function(err, req, res, next) {
 const port = 3000;
 app.set('port', port);
 
-const server = http.createServer(app);
-server.listen(port, () => {
-  //for tools/runserver.js enable callback
-  console.log(`The server is running at http://localhost:${port}/`);
-});
-server.on('error', onError);
+if (!module.hot) {
+  const server = http.createServer(app);
+  server.listen(port, () => {
+      //for tools/runserver.js enable callback
+      console.log(`The server is running at http://localhost:${port}/`);
+    });
+  server.on('error', onError);
+}
 
 /**
  * Event listener for HTTP server "error" event.
@@ -192,4 +210,13 @@ function onError(error) {
       throw error;
   }
 }
+if (module.hot) {
+  app.hot = module.hot;
+  module.hot.accept('./server.js');
+  /*\
+  module.hot.accept('./routes/root', () => {
+    console.log('server changed==============================');
+  });*/
+}
 
+export default app;

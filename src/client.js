@@ -25,8 +25,7 @@ const insertCss = (...styles) => {
 };
 const context = {insertCss};
 let render = () => {
-  const createRoutes = require('./routes/root').default;
-  const routes = createRoutes(store);
+  const routes = require('./routes/root').default;
   // calling `match` is simply for side effects of
   // loading route/component code for the initial location
   match({ routes, location }, () => {
