@@ -1,20 +1,20 @@
-// polyfill webpack require.ensure
-if (typeof require.ensure !== 'function') require.ensure = (d, c) => c(require);
-
 import App from '../components/App';
 import PostList from './PostList';
+import About from './About';
+import Post from './Post';
+import NotFound from './NotFound';
+import(/* webpackPrefetch: true */'./Post/containers/PostPage');
+
 function createRoutes() {
   const root = {
     path: '/',
     component: App,
     getChildRoutes(location, cb) {
-      require.ensure([], (require) => {
-        cb(null, [
-          require('./About').default, // no need to modify store, no reducer
-          require('./Post').default, // add async reducer
-          require('./NotFound').default
-        ]);
-      });
+      cb(null, [
+        About,
+        Post,
+        NotFound,
+      ])
     },
 
     indexRoute: {

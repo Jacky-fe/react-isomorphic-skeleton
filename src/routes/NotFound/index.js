@@ -1,6 +1,6 @@
-import NotFound from '../../components/NotFound';
-
 export default {
   path: '*',
-  component: NotFound,
+  getComponents(location, cb) {
+    import(/* webpackPrefetch: true */ '../../components/NotFound').then(compoent => cb(null, compoent.default));
+  },
 };

@@ -1,6 +1,8 @@
-
-import component from './containers/PostPage'
 export default {
   path: 'post/:slug',
-  component,
+  getComponents(location, cb) {
+    import(/* webpackPrefetch: true */'./containers/PostPage').then(postPage => {
+      cb(null, postPage.default)
+    });
+  },
 };

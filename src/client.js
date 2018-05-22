@@ -59,9 +59,6 @@ let render = () => {
           delete window.INITIAL_STATE;
         } 
         trigger('fetch', components, locals);
-        
-        // Fetch deferred, client-only data dependencies:
-        trigger('defer', components, locals);
       });
   });
 };
