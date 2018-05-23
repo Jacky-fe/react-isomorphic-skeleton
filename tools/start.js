@@ -8,7 +8,7 @@
  */
 
 // import runServer from './runServer';
-import webpackConfig from './webpack.config.babel';
+import webpackConfig from './webpack.config';
 import copy from './copy';
 import path from 'path';
 import express from 'express';
@@ -103,6 +103,7 @@ async function start() {
 
   // Configure compilation
   await run(clean);
+  await run(copy.bind(undefined, { watch: true }));
   const multiCompiler = webpack(webpackConfig);
   const clientCompiler = multiCompiler.compilers.find(
     compiler => compiler.name === 'client',

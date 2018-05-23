@@ -37,7 +37,7 @@ async function copy({ watch } = {}) {
 
   replace({
     regex: '"start".*',
-    replacement: '"start": "node server.js"',
+    replacement: '"start": "node server.js",',
     paths: ['dist/package.json'],
     recursive: false,
     silent: false,
