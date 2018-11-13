@@ -3,20 +3,16 @@ import PostList from './PostList';
 import About from './About';
 import Post from './Post';
 import NotFound from './NotFound';
-import(/* webpackPrefetch: true */'./Post/containers/PostPage');
 
-function createRoutes() {
+function createRoutes(store) {
   const root = {
     path: '/',
     component: App,
-    getChildRoutes(location, cb) {
-      cb(null, [
-        About,
-        Post,
-        NotFound,
-      ])
-    },
-
+    childRoutes: [
+      About,
+      Post(store),
+      NotFound
+    ],
     indexRoute: {
       component: PostList,
     },
@@ -24,5 +20,4 @@ function createRoutes() {
 
   return root;
 }
-const routes = createRoutes();
-export default routes;
+export default createRoutes;

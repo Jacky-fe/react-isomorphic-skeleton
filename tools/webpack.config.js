@@ -101,6 +101,10 @@ const config = {
                 'stage-0',
               ],
               plugins: [
+                "syntax-dynamic-import",
+                ["import-inspector", {
+                  "serverSideRequirePath": true
+                }],
                 'transform-runtime',
                 [
                   "antd",
@@ -266,6 +270,9 @@ const config = {
   resolve: {
     modules: ['node_modules'],
     extensions: ['.webpack.js', '.web.js', '.js', '.jsx', '.json'],
+    alias: {
+      components: path.resolve(__dirname, '../src/components')
+    }
   },
 
   cache: DEBUG,

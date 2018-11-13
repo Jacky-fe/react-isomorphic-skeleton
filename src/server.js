@@ -4,7 +4,6 @@ import favicon from 'serve-favicon';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import compression from 'compression';
 import http from  'http';
 import hpp from 'hpp';
 import assets from './assets';
@@ -21,13 +20,13 @@ import reducer from './createReducer';
 import helmet from 'helmet';
 import Wrapper from './components/Wrapper';
 import React from 'react';
-import routes from './routes/root';
+import createRoutes from './routes/root';
+
 const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
 // view engine setu
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(compression());
 // uncomment after placing your favicon in ./static
 //app.use(favicon(path.join(__dirname, 'static', 'favicon.ico')));
 app.use(morgan('dev'));
@@ -57,13 +56,13 @@ app.use(express.static(path.join(__dirname, './static')));
 app.use('/api/v0/posts', require('./api/posts'));
 app.use('/api/v0/post', require('./api/post'));
 // core render
-
 app.get('*', async (req, res, next) => {
   const store = configureStore();
+  const routes = createRoutes(store);
   const history = createMemoryHistory(req.path);
   const { dispatch } = store;
   try{
-    match({ routes, history }, (error, redirectLocation, renderProps) => {
+    match({ routes, history }, async (error, redirectLocation, renderProps) => {
       if (error){
         next(error);
       }
@@ -72,8 +71,7 @@ app.get('*', async (req, res, next) => {
         res.end();
       }
       else if (renderProps) {
-        
-        const { components } = renderProps;
+        const { components, routes: sourceRoutes } = renderProps;
         const allStyles = [];
         const cssByLoader = [];
         const insertCss = (...styles) => {
@@ -122,7 +120,7 @@ app.get('*', async (req, res, next) => {
                 <style id="css">${cssByLoader.join('')}</style>
               </head>
               <body>
-                <div id="root" className="container-fluid" >${data}</div>
+                <div id="root" className="container-fluid">${data}</div>
                 <script>
                 window.INITIAL_STATE = ${JSON.stringify(initialState)};
                 </script>

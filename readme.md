@@ -8,7 +8,7 @@ react升级到了16.3.2
 
 1. 每个路由的组件和逻辑都放在了单独的文件夹，便于以后单独提出；
 2. 做到了服务端同构渲染；
-3. 做到了html, css, js的根据路由按需加载；
+3. 做到了html, css, js，route，reducer的coder split；
 4. 比较纯净，没有太多的轮子；
 5. 集成了react-redux和react-router（3.2）；
 6. 支持hot-replace;

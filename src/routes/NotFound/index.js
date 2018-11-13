@@ -1,6 +1,7 @@
 export default {
   path: '*',
-  getComponents(location, cb) {
-    import(/* webpackPrefetch: true */ '../../components/NotFound').then(compoent => cb(null, compoent.default));
+  async getComponents(location, cb) {
+    const c = await import('../../components/NotFound');
+    return c.default;
   },
 };

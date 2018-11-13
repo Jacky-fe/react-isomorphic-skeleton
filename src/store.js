@@ -18,6 +18,13 @@ export function configureStore(initialState = {}) {
 
   store.asyncReducers = {};
 
+  store.injectAsyncReducer = (name, asyncReducer) => {
+    if (!store.asyncReducers[name]) {
+      store.asyncReducers[name] = asyncReducer;
+      store.replaceReducer(createReducer(store.asyncReducers));
+    }
+  };
+  
   if (process.env.NODE_ENV === 'development') {
     if (module.hot) {
       module.hot.accept('./createReducer', () =>

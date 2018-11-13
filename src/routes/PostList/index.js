@@ -15,10 +15,12 @@ const mapStateToProps = (state) => ({
   posts: state.posts.data,
 });
 
-const PostListPage = ({ posts }) =>
-  <div className={s.root}>
+const PostListPage = ({ posts }) =>{
+  return <div className={s.root}>
     {posts.map((post, i) => <PostListItem key={post.id} post={post} />)}
   </div>;
+}
+
 
 PostListPage.propTypes = {
   posts: PropTypes.array.isRequired,
