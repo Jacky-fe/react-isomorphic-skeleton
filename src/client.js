@@ -30,7 +30,7 @@ const routes = require('./routes/root').default(store);
 const render = () => {
   match({ routes, location }, async (error, redirectLocation, renderProps) => {
     // 在初次渲染之前，必须把相关路由的js请求下来，否则会报“div not in div”的错
-    await Promise.all(syncRoutes(renderProps.routes, store, true));
+    await Promise.all(syncRoutes(renderProps.routes));
     ReactDOM.hydrate(
       <Wrapper context={context}>
         <Provider store={store}>

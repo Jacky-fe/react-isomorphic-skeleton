@@ -1,10 +1,11 @@
-body {
+.body {
   font-size: 1.25rem;
   line-height: 1.5;
+  color: #bbb;
   margin: 1rem 0;
 }
 .title {
   font-size: 36px;
   margin: 1rem 0;
-  color: #000;
+  color: #666;
 }

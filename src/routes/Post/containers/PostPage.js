@@ -20,32 +20,38 @@ const mapStateToProps = state => ({
   error: state.currentPost.error
 });
 
-const PostPage = ({ title, content, isLoading, error }) => {
-  if (!error) {
-    return (
-      <div>
-        <Helmet
-          title={ title }
-        />
-        {isLoading &&
-          <div>
-            <h2 className={styles.title}>Loading....</h2>
-            <p className={styles.primary}></p>
-          </div>
-        }
-        {!isLoading &&
-          <div>
-            <h2 className={styles.title}>{ title }</h2>
-            <p className={styles.body}>{ content }</p>
-          </div>
-        }
-      </div>
-    );
-  } else {
-    // maybe check for different types of errors and display appropriately
-    return <NotFound />;
+@withStyles(styles)
+@connect(mapStateToProps)
+@provideHooks(redial)
+class PostPage extends React.Component {
+  render() {
+    const { title, content, isLoading, error } = this.props;
+    if (!error) {
+      return (
+        <div>
+          <Helmet
+            title={ title }
+          />
+          {isLoading &&
+            <div>
+              <h2 className={styles.title}>Loading....</h2>
+              <p className={styles.primary}></p>
+            </div>
+          }
+          {!isLoading &&
+            <div>
+              <h2 className={styles.title}>{ title }</h2>
+              <p className={styles.body}>{ content }</p>
+            </div>
+          }
+        </div>
+      );
+    } else {
+      // maybe check for different types of errors and display appropriately
+      return <NotFound />;
+    }
   }
-};
+}
 
 PostPage.propTypes = {
   title: PropTypes.string,
@@ -54,4 +60,4 @@ PostPage.propTypes = {
   error: PropTypes.object
 }
 
-export default withStyles(styles)(provideHooks(redial)(connect(mapStateToProps)(PostPage)));
+export default PostPage;

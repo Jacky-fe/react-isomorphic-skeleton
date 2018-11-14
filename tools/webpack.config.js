@@ -101,15 +101,16 @@ const config = {
                 'stage-0',
               ],
               plugins: [
-                "syntax-dynamic-import",
-                ["import-inspector", {
-                  "serverSideRequirePath": true
+                'syntax-dynamic-import',
+                ['import-inspector', {
+                  'serverSideRequirePath': true
                 }],
                 'transform-runtime',
+                'transform-decorators-legacy',
                 [
-                  "antd",
+                  'antd',
                   {
-                    "style": "true"
+                    'style': 'true'
                   }
                 ],
                 ...DEBUG ? [] : [
@@ -130,8 +131,8 @@ const config = {
         // eg: antd 
         test: /\.css$/,
         include: [
-          path.join(__dirname, "../src/thirdpart"),
-          path.join(__dirname, "../node_modules"),
+          path.join(__dirname, '../src/thirdpart'),
+          path.join(__dirname, '../node_modules'),
         ],
         use: [
           'isomorphic-style-loader',
@@ -153,8 +154,8 @@ const config = {
       {
         // add dynamic className for our project
         test(filePath) {
-          return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, "../src"))
-            && !filePath.startsWith(path.join(__dirname, "../src/thirdpart"));
+          return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, '../src'))
+            && !filePath.startsWith(path.join(__dirname, '../src/thirdpart'));
         },
         use: [
           'isomorphic-style-loader',

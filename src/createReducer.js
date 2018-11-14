@@ -1,6 +1,6 @@
 import posts from './routes/PostList/reducer';
 import { combineReducers } from 'redux';
-
+export const DEFAULT_REDUCER_KEYS = ['posts'];
 // Only combine reducers needed for initial render, others will be
 // added async
 export default function createReducer(asyncReducers) {
