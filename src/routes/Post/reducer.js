@@ -1,7 +1,7 @@
 import * as types from '../../constants';
 import update from 'immutability-helper';
 
-export default function currentPost(state = {
+export default function (state = {
   lastFetched: null,
   isLoading: false,
   error: null,

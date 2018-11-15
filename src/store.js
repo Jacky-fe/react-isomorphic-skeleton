@@ -1,14 +1,15 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { callAPIMiddleware } from './middleware/callAPIMiddleware';
-import { DEFAULT_REDUCER_KEYS, default as createReducer } from './createReducer';
+import { callAPIMiddleware } from './middleware/call-api-middleware';
+import { DEFAULT_REDUCER_KEYS, default as createReducer } from './create-reducer';
 
 export function configureStore(initialState = {}) {
   const emptyReducer = (state = {}) => state;
+  emptyReducer.isEmpty = true;
   const initialReducers = {};
   for(const key in initialState) {
     if (DEFAULT_REDUCER_KEYS.indexOf(key) < 0) {
-      // 注入空reducer，以免报“Unexpected key "currentPost" found in previous state”
+      // 注入空reducer，以免报“Unexpected key "xxx" found in previous state”
       initialReducers[key] = emptyReducer;
     }
   }
@@ -25,17 +26,15 @@ export function configureStore(initialState = {}) {
 
   store.asyncReducers = initialReducers;
 
-  store.injectAsyncReducer = (name, asyncReducer) => {
-    if (!store.asyncReducers[name]) {
-      store.asyncReducers[name] = asyncReducer;
-      store.replaceReducer(createReducer(store.asyncReducers));
-    }
+  store.injectAsyncReducer = function(name, asyncReducer){
+    this.asyncReducers[name] = asyncReducer;
+    this.replaceReducer(createReducer(store.asyncReducers));
   };
   
   if (process.env.NODE_ENV === 'development') {
     if (module.hot) {
-      module.hot.accept('./createReducer', () =>
-        store.replaceReducer(require('./createReducer').default)
+      module.hot.accept('./create-reducer', () =>
+        store.replaceReducer(require('./create-reducer').default)
       );
     }
   }

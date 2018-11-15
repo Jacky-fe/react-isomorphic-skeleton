@@ -13,12 +13,12 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { trigger } from 'redial';
-import { callAPIMiddleware } from './middleware/callAPIMiddleware';
+import { callAPIMiddleware } from './middleware/call-api-middleware';
 import { configureStore } from './store';
 import Helm from 'react-helmet'; // because we are already using helmet
-import reducer from './createReducer';
+import reducer from './create-reducer';
 import helmet from 'helmet';
-import Wrapper from './components/Wrapper';
+import Wrapper from './components/wrapper';
 import React from 'react';
 import createRoutes from './routes/root';
 

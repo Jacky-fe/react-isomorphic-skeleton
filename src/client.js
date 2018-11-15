@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from './store';
 import { syncRoutes } from './utils/SyncRoutes';
-import Wrapper from './components/Wrapper';
+import Wrapper from './components/wrapper';
 const initialState = window.INITIAL_STATE || {};
 
 // Set up Redux (note: this API requires redux@>=3.1.0):

@@ -2,7 +2,7 @@ import { Router } from 'express';
 const router = new Router();
 
 // Remove this
-import fakeDB from '../fakeDB.js';
+import fakeDB from '../fake-db.js';
 
 router.get('/:slug', (req, res) => {
   const index = fakeDB.findIndex(el => el.slug === req.params.slug);

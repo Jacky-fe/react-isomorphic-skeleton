@@ -1,8 +1,8 @@
 import App from '../components/App';
-import PostList from './PostList';
-import About from './About';
-import Post from './Post';
-import NotFound from './NotFound';
+import PostList from './post-list/containers';
+import About from './about';
+import Post from './post';
+import NotFound from './not-found';
 
 function createRoutes(store) {
   const root = {

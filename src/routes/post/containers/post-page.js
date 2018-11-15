@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { loadPost } from '../actions';
 import { Type } from '../../../style';
 import Helmet from 'react-helmet';
-import NotFound from '../../../components/NotFound';
+import NotFound from '../../../components/not-found';
 import styles from './style.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
