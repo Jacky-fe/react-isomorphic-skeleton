@@ -5,8 +5,9 @@ import { match, Router, browserHistory } from 'react-router';
 import matchRoutes from 'react-router/lib/matchRoutes';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import Loadable from 'react-loadable'
+import ConvertLoadableComponents from 'utils/convert-loadable-components'
 import { configureStore } from './store';
-import { syncRoutes } from './utils/SyncRoutes';
 import Wrapper from './components/wrapper';
 const initialState = window.INITIAL_STATE || {};
 
@@ -14,29 +15,15 @@ const initialState = window.INITIAL_STATE || {};
 const store = configureStore(initialState);
 const { dispatch } = store;
 
-const { pathname, search, hash } = window.location
-const location = `${pathname}${search}${hash}`
-const allStyles = [];
-const insertCss = (...styles) => {
-  styles.forEach(item => {
-    if (allStyles.indexOf(item) < 0) {
-      allStyles.push(item);
-      item._insertCss();
-    }
-  });
-};
-const context = {insertCss};
 const routes = require('./routes/root').default(store);
 const render = () => {
   match({ routes, location }, async (error, redirectLocation, renderProps) => {
     // 在初次渲染之前，必须把相关路由的js请求下来，否则会报“div not in div”的错
-    await Promise.all(syncRoutes(renderProps.routes));
-    ReactDOM.hydrate(
-      <Wrapper context={context}>
-        <Provider store={store}>
-            <Router routes={routes} history={browserHistory} />
-        </Provider>
-      </Wrapper>,
+    await Loadable.preloadReady();
+    await Promise.all(renderProps.components.map(item => item.preload && item.preload()));
+    ReactDOM.hydrate(<Provider store={store}>
+        <Router routes={routes} history={browserHistory} />
+      </Provider>,
       document.getElementById('root')
     );
   });
@@ -46,8 +33,8 @@ browserHistory.listenBefore(location => {
   // Match routes based on location object:
   match({ routes, location }, async (error, redirectLocation, renderProps) => {
     // Get array of route handler components:
-    const { components, routes: sourceRoutes } = renderProps;
     // Define locals to be provided to all lifecycle hooks:
+    const { components } = renderProps;
     const locals = {
         path: renderProps.location.pathname,
         query: renderProps.location.query,
@@ -60,7 +47,8 @@ browserHistory.listenBefore(location => {
     if (window.INITIAL_STATE) {
       delete window.INITIAL_STATE;
     }
-    trigger('fetch', components, locals);
+    const preloadCompoents = await ConvertLoadableComponents(components);
+    trigger('fetch', preloadCompoents, locals);
   });
 });
 

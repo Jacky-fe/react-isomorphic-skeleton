@@ -1,7 +1,10 @@
+import Loadable from 'react-loadable';
+import Loading from 'components/loading';
+
 export default {
   path: 'about',
-  async getComponents(location, cb) {
-    const c = await import('./components/about');
-    return c.default;
-  },
+  component: Loadable({
+    loader: () => import('./components/about'),
+    loading: Loading,
+  })
 };

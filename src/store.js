@@ -28,7 +28,7 @@ export function configureStore(initialState = {}) {
 
   store.injectAsyncReducer = function(name, asyncReducer){
     this.asyncReducers[name] = asyncReducer;
-    this.replaceReducer(createReducer(store.asyncReducers));
+    this.replaceReducer(createReducer(this.asyncReducers));
   };
   
   if (process.env.NODE_ENV === 'development') {

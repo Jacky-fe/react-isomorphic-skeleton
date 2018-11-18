@@ -3,6 +3,8 @@ import webpack from 'webpack';
 import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
+import { ReactLoadablePlugin } from 'react-loadable/webpack';
 import fs from 'fs';
 let mainConfig = { cdn: '' };
 const DEBUG = !process.argv.includes('--release');
@@ -105,6 +107,7 @@ const config = {
                 ['import-inspector', {
                   'serverSideRequirePath': true
                 }],
+                'react-loadable/babel',
                 'transform-runtime',
                 'transform-decorators-legacy',
                 [
@@ -135,11 +138,12 @@ const config = {
           path.join(__dirname, '../node_modules'),
         ],
         use: [
-          'isomorphic-style-loader',
+          ExtractCssChunks.loader,
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
+              minimize: !DEBUG
             },
           },
           {
@@ -158,7 +162,7 @@ const config = {
             && !filePath.startsWith(path.join(__dirname, '../src/thirdpart'));
         },
         use: [
-          'isomorphic-style-loader',
+          ExtractCssChunks.loader,
           {
             loader: 'css-loader',
             options: {
@@ -182,7 +186,7 @@ const config = {
       {
         test: /\.scss$/,
         use: [
-          'isomorphic-style-loader',
+          ExtractCssChunks.loader,
           //`css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
           {
             loader: 'css-loader',
@@ -204,10 +208,6 @@ const config = {
           },
           'sass-loader',
         ],
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader',
       },
       {
         test: /\.txt$/,
@@ -272,7 +272,8 @@ const config = {
     modules: ['node_modules'],
     extensions: ['.webpack.js', '.web.js', '.js', '.jsx', '.json'],
     alias: {
-      components: path.resolve(__dirname, '../src/components')
+      components: path.resolve(__dirname, '../src/components'),
+      utils: path.resolve(__dirname, '../src/utils')
     }
   },
 
@@ -326,6 +327,17 @@ const clientConfig = extend(true, {}, config, {
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true }),
+    new ExtractCssChunks({
+      filename:' [name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
+      hot: true, // if you want HMR - we try to automatically inject hot reloading but if it's not working, add it to the config
+      orderWarning: true, // Disable to remove warnings about conflicting order between imports
+      reloadAll: true, // when desperation kicks in - this is a brute force HMR flag
+      cssModules: true // if you use cssModules, this can help.
+    }),
+    new ReactLoadablePlugin({
+      filename: path.resolve(__dirname, DEBUG ? '../src/loadable.json' : '../dist/loadable.json'),
+    }),
 
     // Emit a file with assets paths
     // https://github.com/sporto/assets-webpack-plugin#options
@@ -380,10 +392,17 @@ const serverConfig = extend(true, {}, config, {
 
   plugins: [
 
+    new ExtractCssChunks({
+      filename: "[name].[contenthash].css",
+      chunkFilename: "[id].[contenthash].css",
+      hot: true, // if you want HMR - we try to automatically inject hot reloading but if it's not working, add it to the config
+      orderWarning: true, // Disable to remove warnings about conflicting order between imports
+      reloadAll: true, // when desperation kicks in - this is a brute force HMR flag
+      cssModules: true // if you use cssModules, this can help.
+    }),
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
-
     // Adds a banner to the top of each generated chunk
     // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
     new webpack.BannerPlugin({ banner: 'require("source-map-support").install();', raw: true, entryOnly: false }),

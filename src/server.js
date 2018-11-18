@@ -6,22 +6,26 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import http from  'http';
 import hpp from 'hpp';
-import assets from './assets';
 import ReactDom from 'react-dom/server';
 import { createMemoryHistory, RouterContext, match } from 'react-router';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { trigger } from 'redial';
+import Loadable from 'react-loadable';
+import { getBundles } from 'react-loadable/webpack';
+import helmet from 'helmet';
 import { callAPIMiddleware } from './middleware/call-api-middleware';
+import React from 'react';
 import { configureStore } from './store';
 import Helm from 'react-helmet'; // because we are already using helmet
 import reducer from './create-reducer';
-import helmet from 'helmet';
 import Wrapper from './components/wrapper';
-import React from 'react';
 import createRoutes from './routes/root';
+import ConvertLoadableComponents from 'utils/convert-loadable-components'
+import assets from './assets';
 
+const stats = require('./loadable.json');
 const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
 // view engine setu
@@ -72,18 +76,6 @@ app.get('*', async (req, res, next) => {
       }
       else if (renderProps) {
         const { components, routes: sourceRoutes } = renderProps;
-        const allStyles = [];
-        const cssByLoader = [];
-        const insertCss = (...styles) => {
-          styles.forEach( (item, index, array) => {
-            // avoid repeat rendering
-            if (allStyles.indexOf(item) < 0) {
-              allStyles.push(item);
-              cssByLoader.push(item._getCss());
-            }
-          });
-        };
-        const context = {insertCss};
         // Define locals to be provided to all lifecycle hooks:
         const locals = {
           path: renderProps.location.pathname,
@@ -92,19 +84,21 @@ app.get('*', async (req, res, next) => {
           // Allow lifecycle hooks to dispatch Redux actions:
           dispatch,
         };
-        trigger('fetch', components, locals)
+        const preloadCompoents = await ConvertLoadableComponents(components);
+        trigger('fetch', preloadCompoents, locals)
           .then(() => {
-            
             const initialState = store.getState();
-            const InitialView = (
-              <Wrapper context={context}>
-                <Provider store={store}>
-                  <RouterContext {...renderProps} />
-                </Provider>
-               </Wrapper> 
-            );
+            const modules = [];
+            const InitialView = (<Loadable.Capture report={moduleName => modules.push(moduleName)}>
+              <Provider store={store}>
+                <RouterContext {...renderProps} />
+              </Provider>
+            </Loadable.Capture>);
             const data = ReactDom.renderToString(InitialView);
-        
+            const allBundles = getBundles(stats, modules);
+            const cssBundles = [];
+            const jsBundles = [];
+            allBundles.forEach(item => item.file.endsWith('.css') ? cssBundles.push(item.publicPath) : jsBundles.push(item.publicPath) );
             const head = Helm.rewind();
             const outputhtml = `<!DOCTYPE html>
             <html lang="en">
@@ -113,11 +107,13 @@ app.get('*', async (req, res, next) => {
                 ${head.title.toString()}
                 ${head.meta.toString()}
                 ${head.link.toString()}
+                ${cssBundles.map(item => `<link rel="stylesheet" href="${item}" type="text/css" />`)}
+                <link rel="stylesheet" href="${assets.vendors.css}" type="text/css" />
+                <link rel="stylesheet" href="${assets.client.css}" type="text/css" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <style rel="stylesheet" type="text/css">
                   body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{margin:0;padding:0;font-family:'微软雅黑'}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul,li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0}a{color:#000;text-decoration:none}a:active{color:#000}.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}.clear{clear:both}html{-webkit-text-size-adjust:none}
                 </style>
-                <style id="css">${cssByLoader.join('')}</style>
               </head>
               <body>
                 <div id="root" className="container-fluid">${data}</div>
@@ -177,10 +173,11 @@ app.set('port', port);
 
 if (!module.hot) {
   const server = http.createServer(app);
-  server.listen(port, () => {
-      //for tools/runserver.js enable callback
+  Loadable.preloadAll().then(() => {
+    server.listen(port, () => {
       console.log(`The server is running at http://localhost:${port}/`);
     });
+  });
   server.on('error', onError);
 }
 

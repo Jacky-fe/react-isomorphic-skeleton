@@ -4,7 +4,7 @@ import {
   LOAD_POSTS_FAILURE
 } from '../../constants';
 
-import http from '../../utils/HttpClient';
+import http from 'utils/http-client';
 export function loadPosts() {
   return {
     // Types of actions to emit before and after

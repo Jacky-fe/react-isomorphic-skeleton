@@ -3,9 +3,7 @@ import IndexLink from 'react-router/lib/IndexLink';
 import PropTypes from 'prop-types';
 import Link from 'react-router/lib/Link';
 import style from './index.css';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
-@withStyles(style)
 class Nav extends React.Component {
   render() {
     return (

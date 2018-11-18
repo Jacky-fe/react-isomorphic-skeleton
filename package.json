@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "babel-node tools/run start",
-    "build": "babel-node tools/run build",
+    "build": "babel-node tools/run build --release",
     "lint": "eslint src tools && jscs src tools --verbose",
     "test": "eslint src && jest"
   },
@@ -30,6 +30,7 @@
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-helmet": "^5.2.0",
+    "react-loadable": "^5.5.0",
     "react-redux": "^5.0.7",
     "react-router": "^3.2.1",
     "redial": "^0.4.2",
@@ -60,6 +61,7 @@
     "browser-sync": "^2.11.2",
     "css-loader": "^0.28.11",
     "del": "^2.2.0",
+    "extract-css-chunks-webpack-plugin": "^3.2.1",
     "file-loader": "^1.1.11",
     "gaze": "^1.0.0",
     "install": "^0.6.1",

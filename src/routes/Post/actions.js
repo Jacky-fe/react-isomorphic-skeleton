@@ -3,7 +3,7 @@ import {
   LOAD_POST_SUCCESS,
   LOAD_POST_FAILURE,
 } from '../../constants';
-import http from '../../utils/HttpClient';
+import http from 'utils/http-client';
 
 export function loadPost(slug) {
   return {

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import styles from './style.css'
 import data from '../data';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 // This is a static page. It uses an array to hold data about the resources
 // and maintain DRY
@@ -30,4 +29,4 @@ const About = (props) => {
   );
 };
 
-export default withStyles(styles)(About);
+export default About;
