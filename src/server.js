@@ -207,11 +207,9 @@ function onError(error) {
 }
 if (module.hot) {
   app.hot = module.hot;
-  module.hot.accept('./server.js');
-  /*\
   module.hot.accept('./routes/root', () => {
     console.log('server changed==============================');
-  });*/
+  });
 }
 
 export default app;

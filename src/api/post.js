@@ -16,7 +16,7 @@ router.get('/:slug', (req, res) => {
   setTimeout(() => {
     res.statusCode = 200;
     res.json(fakeDB[index]);
-  }, 300);
+  }, 0);
 });
 
 module.exports = router;

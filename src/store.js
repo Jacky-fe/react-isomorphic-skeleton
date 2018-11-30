@@ -17,11 +17,7 @@ export function configureStore(initialState = {}) {
     applyMiddleware(
       thunk,
       callAPIMiddleware
-    ),
-     (process.env.NODE_ENV === 'development') &&
-      typeof window === 'object' &&
-       typeof window.devToolsExtension !== 'undefined' ?
-        window.devToolsExtension() : f => f
+    )
   ));
 
   store.asyncReducers = initialReducers;

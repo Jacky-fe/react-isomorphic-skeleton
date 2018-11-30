@@ -6,7 +6,6 @@ import { provideHooks } from 'redial';
 import NotFound from 'components/not-found';
 import styles from './style.css'
 import { loadPost } from '../actions';
-
 const redial = {
   fetch: ({ dispatch, params: { slug } }) => dispatch(loadPost(slug))
 };
