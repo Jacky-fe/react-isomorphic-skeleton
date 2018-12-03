@@ -65,7 +65,7 @@
     "gaze": "^1.0.0",
     "install": "^0.6.1",
     "ncp": "^2.0.0",
-    "node-sass": "^3.4.2",
+    "node-sass": "^4.9.4",
     "npm": "^3.8.6",
     "pixrem": "^4.0.1",
     "pleeease-filters": "^4.0.0",
