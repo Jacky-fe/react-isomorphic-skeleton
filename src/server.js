@@ -206,6 +206,7 @@ function onError(error) {
   }
 }
 if (module.hot) {
+  // 开启热更新
   app.hot = module.hot;
   module.hot.accept('./routes/root', () => {
     console.log('server changed==============================');
