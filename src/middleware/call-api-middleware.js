@@ -5,8 +5,8 @@ export function callAPIMiddleware({ dispatch, getState }) {
       callAPI,
       shouldCallAPI = () => true,
       payload = {},
+      ignoreError = false,
     } = action;
-
     if (!types) {
       // Normal action: pass it on
       return next(action);
@@ -35,15 +35,30 @@ export function callAPIMiddleware({ dispatch, getState }) {
     }));
 
     return callAPI().then(
-      response => dispatch(Object.assign({}, payload, {
-        body: response,
-        lastFetched: Date.now(),
-        type: successType,
-      })),
-      error => dispatch(Object.assign({}, payload, {
-        error,
+      response => {
+        dispatch(Object.assign({}, payload, {
+          body: response,
+          lastFetched: Date.now(),
+          type: successType,
+        }));
+      },
+      error => {
+        dispatch(Object.assign({}, payload, {
+          error,
+          type: failureType,
+        }));
+        if (!ignoreError) {
+          dispatch({ type: 'ON_ERROR', show: true, message: error.em || error.message });
+        }
+      }
+    ).catch(error => {
+      dispatch(Object.assign({}, payload, {
+        error: { ec: 10086, em: error.message },
         type: failureType,
-      }))
-    );
+      }));
+      if (!ignoreError) {
+        dispatch({ type: 'ON_ERROR', show: true, message: error.em || error.message });
+      }
+    });
   };
 }

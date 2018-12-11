@@ -33,6 +33,8 @@ async function copy({ watch } = {}) {
     ncp('src/static', 'dist/static'),
     ncp('src/views', 'dist/views'),
     ncp('package.json', 'dist/package.json'),
+    ncp('config.js', 'dist/config.js'),
+    ncp('config.js', 'src/config.js'),
   ]);
 
   replace({
@@ -44,12 +46,19 @@ async function copy({ watch } = {}) {
   });
 
   if (watch) {
-    const watcher = await new Promise((resolve, reject) => {
+    const viewsWatcher = await new Promise((resolve, reject) => {
       gaze('src/views/**/*.*', (err, val) => err ? reject(err) : resolve(val));
     });
-    watcher.on('changed', async (file) => {
+    viewsWatcher.on('changed', async (file) => {
       const relPath = file.substr(path.join(__dirname, '../src/views/').length);
       await ncp(`src/views/${relPath}`, `dist/views/${relPath}`);
+    });
+    const configWatcher = await new Promise((resolve, reject) => {
+      gaze('config.js', (err, val) => err ? reject(err) : resolve(val));
+    });
+    configWatcher.on('changed', () => {
+      ncp('config.js', 'dist/config.js');
+      ncp('config.js', 'src/config.js');
     });
   }
 }

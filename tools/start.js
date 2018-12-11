@@ -19,15 +19,9 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import run, { format } from './run';
 import clean from './clean';
-
+import config from '../config';
 const DEBUG = !process.argv.includes('--release');
-const watchOptions = {
-  // Watching may not work with NFS and machines in VirtualBox
-  // Uncomment next line if it is your case (use true or interval in milliseconds)
-  // poll: true,
-  // Decrease CPU or memory usage in some file systems
-  // ignored: /node_modules/,
-};
+const watchOptions = {};
 function createCompilationPromise(name, compiler, config) {
   return new Promise((resolve, reject) => {
     let timeStart = new Date();
@@ -44,7 +38,7 @@ function createCompilationPromise(name, compiler, config) {
         console.info(
           `[${format(timeEnd)}] Failed to compile '${name}' after ${time} ms`,
         );
-        reject(new Error('Compilation failed!'));
+        reject(new Error('Compilation failed!', stats));
       } else {
         console.info(
           `[${format(
@@ -70,9 +64,7 @@ async function start() {
   if (server) return server;
   server = express();
   server.use(errorOverlayMiddleware());
-  //  不知道干嘛的，先注释掉
   server.use(express.static(path.resolve(__dirname, '../src/static')));
-
   // Configure client-side hot module replacement
   const clientConfig = webpackConfig[0];
   clientConfig.entry.client = ['../tools/lib/webpack-hot-dev-client']
@@ -132,7 +124,7 @@ async function start() {
   );
 
   // https://github.com/glenjamin/webpack-hot-middleware
-  server.use(webpackHotMiddleware(clientCompiler, { log: false }));
+  server.use(webpackHotMiddleware(clientCompiler, { log: false, multiStep: true }));
 
   let appPromise;
   let appPromiseResolve;
@@ -223,6 +215,7 @@ async function start() {
         // https://www.browsersync.io/docs/options
         server: 'src/server.js',
         middleware: [server],
+        port: config.port,
         open: !process.argv.includes('--silent'),
         ...(DEBUG ? {} : { notify: false, ui: false }),
       },

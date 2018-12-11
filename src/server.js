@@ -8,48 +8,34 @@ import http from  'http';
 import hpp from 'hpp';
 import ReactDom from 'react-dom/server';
 import { createMemoryHistory, RouterContext, match } from 'react-router';
-import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
 import { trigger } from 'redial';
 import Loadable from 'react-loadable';
 import { getBundles } from 'react-loadable/webpack';
 import helmet from 'helmet';
-import { callAPIMiddleware } from './middleware/call-api-middleware';
 import React from 'react';
 import { configureStore } from './store';
 import Helm from 'react-helmet'; // because we are already using helmet
-import reducer from './create-reducer';
-import Wrapper from './components/wrapper';
 import createRoutes from './routes/root';
 import ConvertLoadableComponents from 'utils/convert-loadable-components'
 import assets from './assets';
-
+import config from './config';
+import  { middleware as contextMiddleware }  from 'express-httpcontext';
 const stats = require('./loadable.json');
-const isProduction = process.env.NODE_ENV === 'production';
 const app = global.server = express();
+global.config = config;
 // view engine setu
-app.set('views', __dirname + '/views');
+app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
-// uncomment after placing your favicon in ./static
-//app.use(favicon(path.join(__dirname, 'static', 'favicon.ico')));
 app.use(morgan('dev'));
+// 方便随时获取req, res 参见https://github.com/Jacky-fe/express-httpcontext
+app.use(contextMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: false
+  extended: false,
 }));
 app.use(hpp());
-app.use(helmet.contentSecurityPolicy({
-  defaultSrc: ["'self'"],
-  scriptSrc: ["'self'"],
-  styleSrc: ["'self'"],
-  imgSrc: ["'self'"],
-  connectSrc: ["'self'", 'ws:'],
-  fontSrc: ["'self'"],
-  objectSrc: ["'none'"],
-  mediaSrc: ["'none'"],
-  frameSrc: ["'none'"],
-}));
+app.use(helmet.contentSecurityPolicy(config.csp));
 app.use(helmet.xssFilter());
 app.use(helmet.frameguard('deny'));
 app.use(helmet.ieNoOpen());
@@ -75,7 +61,7 @@ app.get('*', async (req, res, next) => {
         res.end();
       }
       else if (renderProps) {
-        const { components, routes: sourceRoutes } = renderProps;
+        const { components } = renderProps;
         // Define locals to be provided to all lifecycle hooks:
         const locals = {
           path: renderProps.location.pathname,
@@ -108,7 +94,7 @@ app.get('*', async (req, res, next) => {
                 ${head.meta.toString()}
                 ${head.link.toString()}
                 ${cssBundles.map(item => `<link rel="stylesheet" href="${item}" type="text/css" />`)}
-                <link rel="stylesheet" href="${assets.vendors.css}" type="text/css" />
+                ${assets.vendors.css ? `<link rel="stylesheet" href="${assets.vendors.css}" type="text/css" />` : ''}
                 <link rel="stylesheet" href="${assets.client.css}" type="text/css" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <style rel="stylesheet" type="text/css">
@@ -154,7 +140,7 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
     });
   });
 }
@@ -164,11 +150,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: {},
   });
 });
 
-const port = 3000;
+const { port } = config;
 app.set('port', port);
 
 if (!module.hot) {
@@ -196,21 +182,17 @@ function onError(error) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
-      break;
     case 'EADDRINUSE':
       console.error(bind + ' is already in use');
       process.exit(1);
-      break;
     default:
       throw error;
   }
 }
+
 if (module.hot) {
   // 开启热更新
   app.hot = module.hot;
-  module.hot.accept('./routes/root', () => {
-    console.log('server changed==============================');
-  });
 }
 
 export default app;

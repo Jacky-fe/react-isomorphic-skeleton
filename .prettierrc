@@ -1,0 +1,7 @@
+{
+  "printWidth": 120,      // 每行字符长度
+  "tabWidth": 2,          // tab代表空格
+  "semi": false,          // 是否分号结尾
+  "useTabs": true,        // 是否tab代替空格
+  "bracketSpacing": true, // Example: { foo: bar }
+}

@@ -14,7 +14,9 @@ export function loadPost(slug) {
     // shouldCallAPI: (state) => shouldFetchPost(state),
 
     // Perform the fetching:
-    callAPI: () => http.get(`/api/v0/post/${slug}`),
+    callAPI: () => { 
+      return http.get(`/api/v0/post/${slug}`); 
+    },
 
     // Arguments to inject in begin/end actions
     payload: { slug },

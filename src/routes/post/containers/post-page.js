@@ -7,13 +7,13 @@ import NotFound from 'components/not-found';
 import styles from './style.css'
 import { loadPost } from '../actions';
 const redial = {
-  fetch: ({ dispatch, params: { slug } }) => dispatch(loadPost(slug))
+  fetch: ({ dispatch, params: { slug } }) => dispatch(loadPost(slug)),
 };
 const mapStateToProps = state => ({
   title: state.currentPost.data.title,
   content: state.currentPost.data.content,
   isLoading: state.currentPost.isLoading,
-  error: state.currentPost.error
+  error: state.currentPost.error,
 });
 @provideHooks(redial)
 @connect(mapStateToProps)
@@ -29,7 +29,7 @@ class PostPage extends React.Component {
           {isLoading &&
             <div>
               <h2 className={styles.title}>Loading....</h2>
-              <p className={styles.primary}></p>
+              <p className={styles.primary} />
             </div>
           }
           {!isLoading &&
@@ -51,7 +51,7 @@ PostPage.propTypes = {
   title: PropTypes.string,
   content: PropTypes.string,
   isLoading: PropTypes.bool,
-  error: PropTypes.object
+  error: PropTypes.object,
 }
 
 export default PostPage;

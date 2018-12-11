@@ -16,6 +16,7 @@ class About extends React.Component {
           title="About"
           />
         <h2 className={styles.header}>About</h2>
+        <h3 className={styles.header}>this page is rendering on client by @clientOnly() decorator</h3>
         <p className={styles.lead}>
           This is an example react application skeleton with isomorphic rendering, async react-router routes, async redux reducers, async data fetching, and code-splitting. And you can debug it with browsersync.
         </p>
