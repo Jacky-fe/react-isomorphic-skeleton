@@ -5,7 +5,6 @@ import { DEFAULT_REDUCER_KEYS, default as createReducer } from './create-reducer
 
 export function configureStore(initialState = {}) {
   const emptyReducer = (state = {}) => state;
-  emptyReducer.isEmpty = true;
   const initialReducers = {};
   for(const key in initialState) {
     if (DEFAULT_REDUCER_KEYS.indexOf(key) < 0) {

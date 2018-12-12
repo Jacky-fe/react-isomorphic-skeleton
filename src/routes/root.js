@@ -11,13 +11,12 @@ function createRoutes(store) {
     childRoutes: [
       About,
       Post(store),
-      NotFound
+      NotFound,
     ],
     indexRoute: {
       component: PostList,
     },
   };
-
   return root;
 }
 export default createRoutes;
