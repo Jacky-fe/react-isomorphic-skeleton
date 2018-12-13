@@ -92,7 +92,6 @@ const serverConfig = extend(true, {}, config, {
       cssModules: true, // if you use cssModules, this can help.
     }),
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false, IS_BROWSER: false }),
-    new webpack.BannerPlugin({ banner: 'require("source-map-support").install();', raw: true, entryOnly: false }),
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
   ],
 

@@ -24,21 +24,23 @@ export default {
               cacheDirectory: DEBUG,
               babelrc: false,
               presets: [
-                'react',
-                'es2015',
-                'stage-0',
+                '@babel/preset-env',
+                '@babel/preset-react',
               ],
               plugins: [
-                'syntax-dynamic-import',
-                ['import-inspector', {
-                  'serverSideRequirePath': true,
-                }],
+                '@babel/plugin-syntax-dynamic-import',
                 'react-loadable/babel',
-                'transform-runtime',
-                'transform-decorators-legacy',
+                '@babel/plugin-transform-runtime',
                 [
-                  'antd',
+                  '@babel/plugin-proposal-decorators',
                   {
+                    'legacy': true,
+                  },
+                ],
+                [
+                  'import',
+                  {
+                    'libraryName': 'antd',
                     'style': 'true',
                   },
                 ],

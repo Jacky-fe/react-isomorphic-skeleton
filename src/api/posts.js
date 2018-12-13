@@ -7,4 +7,4 @@ router.get('/', (req, res) => {
   res.json(fakeDB);
 });
 
-module.exports = router;
+export default router;

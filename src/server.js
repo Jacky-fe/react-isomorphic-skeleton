@@ -42,8 +42,8 @@ app.use(helmet.noSniff());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './static')));
 // API
-app.use('/api/v0/posts', require('./api/posts'));
-app.use('/api/v0/post', require('./api/post'));
+app.use('/api/v0/posts', require('./api/posts').default);
+app.use('/api/v0/post', require('./api/post').default);
 // core render
 app.get('*', async (req, res, next) => {
   const store = configureStore();
@@ -158,10 +158,8 @@ app.set('port', port);
 
 if (!module.hot) {
   const server = http.createServer(app);
-  Loadable.preloadAll().then(() => {
-    server.listen(port, () => {
-      console.log(`The server is running at http://localhost:${port}/`);
-    });
+  server.listen(port, () => {
+    console.log(`The server is running at http://localhost:${port}/`);
   });
   server.on('error', onError);
 }
@@ -188,7 +186,7 @@ function onError(error) {
 }
 
 if (module.hot) {
-  // 开启热更新
+  // 开启热更新，其实没什么卵用，就是为了reload App
   app.hot = module.hot;
 }
 
