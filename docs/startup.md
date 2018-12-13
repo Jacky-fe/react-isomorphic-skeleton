@@ -22,7 +22,7 @@ npm start
 [config.js](./config.md)
 
 ## 更多配置
-可自行修改[webpack.config.js](.,/tools/webpack.config.js)
+可自行修改[webpack.config.js](../tools/webpack.config.js)
 
 ## 注意事项
 1. 在客户端，我们使用ajax请求时，会自动带上referer, cookie，nginx也会加上来源ip等信息。在服务端这些都是没有的，需要将客户端的信息带过去。因此我们封装了http-client.js；参考[网络请求](./network.md)

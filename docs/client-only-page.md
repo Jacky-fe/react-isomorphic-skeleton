@@ -1,6 +1,7 @@
 [起步](./startup.md)
 ## 创建一个纯客户端渲染页面
 1 创建页面文件，通过client-only装饰器标注该组件即可
+
 src/routes/about/containers/about.js
 ``` js
 import React from 'react';
@@ -38,22 +39,10 @@ class About extends React.Component {
 }
 export default About;
 ```
-src/routes/post/containers/style.css
-``` css
-.body {
-  font-size: 1.25rem;
-  line-height: 1.5;
-  color: #bbb;
-  margin: 1rem 0;
-}
-.title {
-  font-size: 36px;
-  margin: 1rem 0;
-  color: #666;
-}
-```
+
 2. 创建路由文件
-src/routes/post/index.js
+
+src/routes/about/index.js
 ``` js
 import Loadable from 'react-loadable';
 import Loading from 'components/loading';
@@ -67,6 +56,7 @@ export default {
 };
 ```
 3. 在路由根文件注册该页面
+
 /src/routes/root.js
 ``` js
 import App from '../components/App';

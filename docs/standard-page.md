@@ -2,6 +2,7 @@
 ## 创建一个标准的按需加载+服务端渲染+数据预取的React+Redux页面
 以post路由为例
 1. 创建actions和reducer
+
 src/constants.js 增加常量
 ``` js
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
@@ -62,6 +63,7 @@ export default function (state = {
 }
 ```
 2. 创建页面文件
+
 src/routes/post/containers/post-page.js
 ``` js
 import React from 'react';
@@ -136,6 +138,7 @@ src/routes/post/containers/style.css
 }
 ```
 3. 创建路由文件
+
 src/routes/post/index.js
 ``` js
 import Loadable from 'react-loadable';
@@ -158,6 +161,7 @@ export default function(store) {
 }
 ```
 4. 在路由根文件注册该页面
+
 /src/routes/root.js
 ``` js
 import App from '../components/App';
