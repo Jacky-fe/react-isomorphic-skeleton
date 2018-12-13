@@ -39,6 +39,8 @@ npm start
 
 [代码切割](./code-split.md)
 
+[首屏渲染\&可视区域渲染\&可视区域懒加载](./performance.md)
+
 ## 项目结构介绍
 
 |--src
