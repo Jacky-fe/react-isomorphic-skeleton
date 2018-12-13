@@ -1,3 +1,8 @@
+[起步](./startup.md)
+
+## 配置
+
+``` js
 // 这个文件仅仅在服务端使用，不要在客户端读取这份文件
 export default {
   // api服务器地址
@@ -17,3 +22,5 @@ export default {
     frameSrc: ["'none'"],
   },
 }
+
+```

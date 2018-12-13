@@ -5,8 +5,14 @@ export default function(store) {
   return {
     path: 'post/:slug',
     component: Loadable({
-      loader: combineComponent(() =>import('./containers/post-page'), () => import('./reducer'), store, 'currentPost'),
+      // 将异步的组件和reducer分别进行绑定后再返回组件
+      loader: combineComponent(
+        () => import('./containers/post-page'),
+        () => import('./reducer'), 
+        store,
+        'currentPost'
+      ),
       loading: Loading,
-    })
+    }),
   };
 }

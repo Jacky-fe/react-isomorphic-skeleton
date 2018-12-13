@@ -155,6 +155,8 @@ plugins: [
 ``` js
 import Loadable from 'react-loadable';
 import { getBundles } from 'react-loadable/webpack';
+import stats from'./loadable.json';
+
 const modules = [];
 const InitialView = (<Loadable.Capture report={moduleName => modules.push(moduleName)}>
   <Provider store={store}>

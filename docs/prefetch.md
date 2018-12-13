@@ -29,7 +29,7 @@
 
 **本模版是一个传统的React + Redux + React-Router的架构，所以最终我们将服务端预取的数据放在了state里**
 
-## 如何实现服务端渲染
+## 如何实现数据预取
 
 1. 编写actions和reducer
 
@@ -117,7 +117,7 @@ export default function(store) {
   return {
     path: 'post/:slug',
     component: Loadable({
-      // 这个函数将异步的组件和reducer进行了绑定
+      // 将异步的组件和reducer分别进行绑定后再返回组件
       loader: combineComponent(
         () => import('./containers/post-page'),
         () => import('./reducer'), 

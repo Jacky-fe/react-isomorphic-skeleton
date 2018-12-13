@@ -2,7 +2,7 @@
 # 服务端渲染原理
 JSX编译后是一堆createElement，在客户端会通过FIber引擎构建一套复杂的渲染调度机制及虚拟Dom来保证高效的渲染，在React v16服务端渲染则非常简单：
 
-服务端通过ReactDOMServerRenderer.renderDOM方法直接将reactElement渲染成字符串
+服务端通过ReactDOMServerRenderer.renderDOM方法直接将ReactElement渲染成字符串
 
 没错，就是递归的方式，不过用了stack来优化了递归的性能
 

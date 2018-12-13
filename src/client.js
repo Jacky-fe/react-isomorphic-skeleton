@@ -9,7 +9,6 @@ import ConvertLoadableComponents from 'utils/convert-loadable-components';
 import { configureStore } from './store';
 const initialState = window.INITIAL_STATE || {};
 
-// Set up Redux (note: this API requires redux@>=3.1.0):
 const store = configureStore(initialState);
 const { dispatch } = store;
 const routes = require('./routes/root').default(store);
@@ -27,7 +26,8 @@ const render = () => {
     );
   });
 };
-
+// 由于browserHistory监控了全局的HistoryApi，所以无法被释放
+// 在热更新后会造成n次调用redial里的钩子，n=热更新次数
 browserHistory.listenBefore(location => {
   // Match routes based on location object:
   match({ routes, location }, async (error, redirectLocation, renderProps) => {

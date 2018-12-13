@@ -1,10 +1,9 @@
-#react-isomorphic-skeleton
-##0.1.3 changelog
-升级了很多生态组件，移除了一些没用的依赖；
-react升级到了16.3.2
+# react-isomorphic-skeleton
 
 ## Description
 这是一个全功能的react同构脚手架，它有你想要的一切：
+
+[文档](./docs/startup.md)
 
 1. 每个路由的组件和逻辑都放在了单独的文件夹，便于以后单独提出；
 2. 做到了服务端同构渲染；
@@ -16,16 +15,13 @@ react升级到了16.3.2
 8. 集成antd框架并支持最小化编译输出，参见src/components/app；
 9. 集成Helmet防范xss攻击；
 10. 支持scss；
-11. 支持微信浏览器；
+11. 兼容腾讯X5浏览器；
 12. 支持className不可变的第三方ui框架如antd按需加载, 参见src/components/app；
 13. 支持css moduler;
 
-入门同学推荐使用[Next.js](https://github.com/zeit/next.js)这种上手容易的
-与Next.js不同的是
+与[Next.js](https://github.com/zeit/next.js)不同的是
 1. css更好用，支持scss，less等直接引用；
 2. 组件级别支持服务端渲染；
-
-
 
 ##注意
 node.js 版本 > 5.5

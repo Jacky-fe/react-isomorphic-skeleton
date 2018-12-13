@@ -4,7 +4,7 @@ import Loading from 'components/loading';
 export default {
   path: 'about',
   component: Loadable({
-    loader: () => import('./components/about'),
+    loader: () => import('./containers/about'),
     loading: Loading,
-  })
+  }),
 };

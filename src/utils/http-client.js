@@ -9,32 +9,22 @@ function getUrl(path) {
   return `${global.config.api}${path}`;
 }
 let contextHelper = null;
+/* eslint-disable */
 if (!IS_BROWSER) {
+/* eslint-enable */
   // 在服务端拿req和res必备
   contextHelper = require('express-httpcontext');
 }
 const preProcess = (config) => {
-  if (canUseDOM) {
-    // 客户端需要加上csrf_secret
-    const csrfSecret =  cookie.parse(document.cookie)['csrf-secret'];
-    config.headers = {
-      ...config.headers,
-      ...csrfSecret ? {
-        'x-csrf-secret': csrfSecret,
-      } : {},
-    };
-  } else {
+  config.headers = config.headers || {};
+  if (!canUseDOM) {
+    // 服务端请求后台时需要带上客户端的信息
     const { req } = contextHelper.getContext();
-    const csrfSecret =  req.cookies['csrf-secret'];
     config.headers = {
       ...config.headers,
       ...req.headers,
-      ...csrfSecret ? {
-        'x-csrf-secret': csrfSecret,
-      } : {},
     };
-  }
-  // console.log(config);
+  } 
 };
 const HttpClient = {
   get: (path, config = {}) => new Promise((resolve, reject) => {

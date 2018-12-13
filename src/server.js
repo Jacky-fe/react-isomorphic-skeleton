@@ -13,14 +13,14 @@ import Loadable from 'react-loadable';
 import { getBundles } from 'react-loadable/webpack';
 import helmet from 'helmet';
 import React from 'react';
-import { configureStore } from './store';
+import  { middleware as contextMiddleware }  from 'express-httpcontext';
 import Helm from 'react-helmet'; // because we are already using helmet
+import { configureStore } from './store';
 import createRoutes from './routes/root';
 import ConvertLoadableComponents from 'utils/convert-loadable-components'
 import assets from './assets';
 import config from './config';
-import  { middleware as contextMiddleware }  from 'express-httpcontext';
-const stats = require('./loadable.json');
+import stats from'./loadable.json';
 const app = global.server = express();
 global.config = config;
 // view engine setu
@@ -165,7 +165,6 @@ if (!module.hot) {
   });
   server.on('error', onError);
 }
-
 /**
  * Event listener for HTTP server "error" event.
  */
@@ -173,7 +172,6 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages

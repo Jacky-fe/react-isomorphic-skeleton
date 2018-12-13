@@ -1,12 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import clientOnly from 'utils/client-only';
 import styles from './style.css'
 import data from '../data';
 
-// This is a static page. It uses an array to hold data about the resources
-// and maintain DRY
+// clientOnly装饰器，标注后仅在客户端渲染
 @clientOnly()
 class About extends React.Component {
   render() {
