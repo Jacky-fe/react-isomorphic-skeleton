@@ -18,7 +18,7 @@ const mapStateToProps = (state: any) => ({
 @provideHooks(redial)
 @connect(mapStateToProps)
 class PostPage extends React.Component<any> {
-  propTypes = {
+  static propTypes = {
     title: PropTypes.string,
     content: PropTypes.string,
     isLoading: PropTypes.bool,

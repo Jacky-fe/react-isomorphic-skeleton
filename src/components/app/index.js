@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import Nav from '../nav';
-import s from './index.css';
-import messageStyle from 'antd/lib/message/style/index.css';
-import message from 'antd/lib/message';
-const info = () => {
-  message.info('yes, it\'s me!');
-};
+import s from './index.scss';
+import { message } from 'antd';
 class App extends React.Component {
+  static propTypes = {
+    children: PropTypes.element,
+  }
+  info = (e) => {
+    message.info('yes, it\'s me!');
+  }
   render() {
     const { children } = this.props;
     return (
@@ -20,7 +22,7 @@ class App extends React.Component {
         <h1 className={s.title} >
           React-Isomorphic-Skeleton
           </h1>
-        <a onClick={info}>click here will open a antd message control</a>
+        <a onClick={this.info}>click here will open a antd message control</a>
         <Nav />
         {children}
         <footer className={s.footer}>

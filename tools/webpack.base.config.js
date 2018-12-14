@@ -48,11 +48,12 @@ export default {
                     'legacy': true,
                   },
                 ],
+                '@babel/proposal-class-properties',
                 [
                   'import',
                   {
                     'libraryName': 'antd',
-                    'style': 'true',
+                    'style': 'css',
                   },
                 ],
                 ...DEBUG ? [] : [
@@ -65,14 +66,13 @@ export default {
         include: [
           path.resolve(__dirname, '../src'),
         ],
-      
       },
       {
         // 第三方UI组件库不适合module=true，所以单独处理
         test: /\.css$/,
         include: [
-          path.join(__dirname, '../src/thirdpart'),
-          path.join(__dirname, '../node_modules'),
+          path.resolve(__dirname, '../src/thirdpart/'),
+          path.resolve(__dirname, '../node_modules/'),
         ],
         use: [
           ExtractCssChunks.loader,
@@ -95,8 +95,8 @@ export default {
       {
         // add dynamic className for our project
         test(filePath) {
-          return /\.css$/.test(filePath) && filePath.startsWith(path.join(__dirname, '../src'))
-            && !filePath.startsWith(path.join(__dirname, '../src/thirdpart'));
+          return /\.css$/.test(filePath) && filePath.startsWith(path.resolve(__dirname, '../src'))
+            && !filePath.startsWith(path.resolve(__dirname, '../src/thirdpart'));
         },
         use: [
           ExtractCssChunks.loader,

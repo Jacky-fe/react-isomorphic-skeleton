@@ -1,15 +1,15 @@
 .link {
   max-width: 700px;
-  color: '#999';
+  color: #909;
   margin: 1.5rem 1rem 1.5rem 0;
-  display: 'inline-block';
-  text-decoration: 'none';
-  font-weight: 'bold';
-  transition: '.2s opacity ease';
+  display: inline-block;
+  text-decoration: none;
+  font-weight: bold;
+  transition: .2s opacity ease;
 }
 .link:hover {
   opacity: .6
 }
 .activeLink {
-  color: '#000'
+  color: #000
 }
