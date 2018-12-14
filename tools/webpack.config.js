@@ -42,8 +42,8 @@ const clientConfig = extend(true, {}, config, {
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true, IS_BROWSER: true }),
     // css切割
     new ExtractCssChunks({
-      filename:'[name].[contenthash].css',
-      chunkFilename: '[name].[contenthash].css',
+      filename: DEBUG ? '[name].css' :'[name].[contenthash].css',
+      chunkFilename: DEBUG ? '[id].css' : '[id].[contenthash].css',
       hot: true, // if you want HMR - we try to automatically inject hot reloading but if it's not working, add it to the config
       orderWarning: true, // Disable to remove warnings about conflicting order between imports
       reloadAll: true, // when desperation kicks in - this is a brute force HMR flag
@@ -84,8 +84,8 @@ const serverConfig = extend(true, {}, config, {
   plugins: [
     // css切割
     new ExtractCssChunks({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[name].[contenthash].css',
+      filename: DEBUG ? '[name].css' :'[name].[contenthash].css',
+      chunkFilename: DEBUG ? '[id].css' : '[id].[contenthash].css',
       hot: true, // if you want HMR - we try to automatically inject hot reloading but if it's not working, add it to the config
       orderWarning: true, // Disable to remove warnings about conflicting order between imports
       reloadAll: true, // when desperation kicks in - this is a brute force HMR flag
