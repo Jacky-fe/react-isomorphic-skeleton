@@ -16,7 +16,7 @@ export default {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /.(jsx?|tsx?)$/,
         use: [
           {
             loader: 'babel-loader',
@@ -24,8 +24,19 @@ export default {
               cacheDirectory: DEBUG,
               babelrc: false,
               presets: [
-                '@babel/preset-env',
-                '@babel/preset-react',
+                [
+                  '@babel/env',
+                  {
+                      modules: false,
+                      useBuiltIns: 'usage',
+                      targets: {
+                        browsers: ['last 2 versions'],
+                        node: 'current',
+                      },
+                  },
+              ],
+              '@babel/react',
+              '@babel/typescript',
               ],
               plugins: [
                 '@babel/plugin-syntax-dynamic-import',
@@ -195,7 +206,7 @@ export default {
 
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.webpack.js', '.web.js', '.js', '.jsx', '.json'],
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       components: path.resolve(__dirname, '../src/components'),
       utils: path.resolve(__dirname, '../src/utils'),

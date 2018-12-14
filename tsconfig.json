@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "module": "esNext",
+    "target": "es2015",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "lib": ["es2017", "dom", "dom.iterable"],
+    "baseUrl": "./src",
+    "noEmit": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": false,
+    "paths": {}
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
